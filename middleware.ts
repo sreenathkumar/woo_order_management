@@ -5,18 +5,14 @@ import { authConfig } from "./auth.config";
 //auth object without the mongodb adapter
 const { auth } = NextAuth(authConfig);
 
-//protected routes
-const privateRoutes = ['/dashboard']
-
 export async function middleware(req: NextRequest) {
     const path = req.nextUrl.pathname;
 
     const session = await auth();
 
-    if (!session && privateRoutes.some((route) => path.startsWith(route))) {
+    if (!session && !path.startsWith('/login')) {
         return NextResponse.redirect(new URL('/login', req.url));
     }
-
 
     return NextResponse.next();
 }
