@@ -14,6 +14,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    image: {
+        type: String,
+    },
+    role: {
+        type: String,
+        default: "user"
+    },
+
     emailVerified: {
         type: Date,
         default: null,
