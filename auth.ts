@@ -49,12 +49,17 @@ export const { handlers: { GET, POST }, signIn, signOut, auth } = NextAuth({
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
-                token.emailVerified = user.emailVerified || null
+                token.emailVerified = user.emailVerified || null;
+                token.role = user.role;
+                token.image = user.image;
+
             }
             return token
         },
         async session({ session, token }) {
             session.user.emailVerified = (token as { emailVerified?: Date | null }).emailVerified || null;
+            session.user.role = (token as { role?: string }).role || "user";
+            session.user.image = (token as { image?: string }).image || '';
             return session
         }
     }
