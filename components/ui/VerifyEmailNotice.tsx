@@ -5,6 +5,7 @@ import { AlertCircle, CheckCircle } from 'lucide-react'
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/shadcn/alert"
 import { Button } from "@/components/shadcn/button"
+import { resendVerificationEmail } from '@/actions/verifyEmail'
 
 interface VerifyEmailNoticeProps {
     email: string
@@ -15,19 +16,21 @@ export function VerifyEmailNotice({ email, }: VerifyEmailNoticeProps) {
     const [resendSuccess, setResendSuccess] = useState(false)
 
     const handleResend = async () => {
-        // setIsResending(true)
-        // try {
-        //     await onResend()
-        //     setResendSuccess(true)
-        // } catch (error) {
-        //     console.error('Failed to resend verification email:', error)
-        // } finally {
-        //     setIsResending(false)
-        // }
+        setIsResending(true)
+        try {
+            const res = await resendVerificationEmail(email);
+            if (res?.status === 'success') {
+                setResendSuccess(true);
+            }
+        } catch (error) {
+            console.error('Failed to resend verification email:', error)
+        } finally {
+            setIsResending(false)
+        }
     }
 
     return (
-        <Alert variant="default" className="bg-yellow-50 border-yellow-200">
+        <Alert variant="default" className="bg-yellow-50 border-yellow-200 max-w-xl">
             <AlertCircle className="h-4 w-4 text-yellow-600" />
             <AlertTitle className="text-yellow-800">Verify your email address</AlertTitle>
             <AlertDescription className="mt-2 text-yellow-700">

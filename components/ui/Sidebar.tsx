@@ -2,23 +2,23 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, FileText, Settings, HelpCircle } from 'lucide-react'
+import { LayoutDashboard, FileText, HelpCircle } from 'lucide-react'
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/shadcn/button"
 
 const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Documents", href: "/dashboard/documents", icon: FileText },
-    { name: "Settings", href: "/dashboard/settings", icon: Settings },
+    { name: "Employees", href: "/dashboard/documents", icon: FileText },
+    { name: "Orders", href: "/dashboard/orders", icon: FileText },
     { name: "Help", href: "/dashboard/help", icon: HelpCircle },
 ]
 
 export function Sidebar() {
-    const pathname = usePathname()
+    const pathname = usePathname();
 
     return (
-        <div className="w-64 bg-white h-full border-r">
+        <div className="w-64 h-full border-r">
             <div className="flex flex-col h-full">
                 <div className="flex items-center justify-center h-16 border-b">
                     <span className="text-2xl font-bold">Logo</span>
@@ -29,8 +29,7 @@ export function Sidebar() {
                             <Button
                                 variant="ghost"
                                 className={cn(
-                                    "w-full justify-start gap-2 px-4",
-                                    pathname === item.href && "bg-gray-100"
+                                    "w-full justify-start gap-2 px-4"
                                 )}
                             >
                                 <item.icon className="h-5 w-5" />
