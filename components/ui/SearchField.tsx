@@ -3,13 +3,14 @@ import { useState } from 'react'
 import { Search } from 'lucide-react'
 
 import { Input } from "@/components/shadcn/input"
+import { cn } from '@/lib/utils'
 
 
-export default function SearchOrder() {
+export default function SearchField({ className }: { className?: string }) {
     const [searchQuery, setSearchQuery] = useState('')
 
     return (
-        <div className="flex items-center justify-between w-full">
+        <div className={cn(`flex items-center justify-between w-full ${className}`)}>
             <form className="relative flex-1 mr-4">
                 <Input
                     type="search"

@@ -1,22 +1,16 @@
-"use client"
-
+import { HelpCircle, IdCard, LayoutDashboard, Package } from 'lucide-react'
 import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { LayoutDashboard, FileText, HelpCircle } from 'lucide-react'
-
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/shadcn/button"
+import { cn } from "@/lib/utils"
 
 const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Employees", href: "/dashboard/documents", icon: FileText },
-    { name: "Orders", href: "/dashboard/orders", icon: FileText },
-    { name: "Help", href: "/dashboard/help", icon: HelpCircle },
+    { name: "Employees", href: "/employees", icon: IdCard },
+    { name: "Orders", href: "/orders", icon: Package },
+    { name: "Help", href: "/help", icon: HelpCircle },
 ]
 
 export function Sidebar() {
-    const pathname = usePathname();
-
     return (
         <div className="w-64 h-full border-r">
             <div className="flex flex-col h-full">

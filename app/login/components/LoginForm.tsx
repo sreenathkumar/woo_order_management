@@ -1,6 +1,5 @@
 'use client'
 
-import SubmitBtn from '@/app/register/components/SubmitBtn'
 import { Alert, AlertDescription } from "@/components/shadcn/alert"
 import { Input } from "@/components/shadcn/input"
 import FormField from '@/components/ui/CustomField'
@@ -9,6 +8,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import PasswordField from './PasswordField'
+import SubmitBtn from "./SubmitBtn"
 
 function LoginForm() {
     const router = useRouter();

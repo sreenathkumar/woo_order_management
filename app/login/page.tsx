@@ -1,4 +1,3 @@
-import Link from "next/link"
 import LoginForm from "./components/LoginForm"
 
 function LoginPage() {
@@ -10,14 +9,6 @@ function LoginPage() {
                     <h2 className="mt-6 text-3xl font-extrabold">Sign in to your account</h2>
                 </div>
                 <LoginForm />
-                <div className="text-center mt-4">
-                    <p className="text-sm text-gray-600">
-                        Don&#39;t have an account?{' '}
-                        <Link href="/register" className="text-card-foreground hover:underline">
-                            Sign up
-                        </Link>
-                    </p>
-                </div>
             </div>
         </main>
     )

@@ -1,17 +1,13 @@
+import "@/styles/globals.css";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import "@/styles/globals.css";
-import { Sidebar } from "@/components/ui/Sidebar";
-import Header from "@/components/ui/Header";
-import { auth } from "@/auth";
-import EmailNotVerified from "@/components/ui/EmailNotVerified";
 
-const geistSans = localFont({
+export const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
-const geistMono = localFont({
+export const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
@@ -28,39 +24,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  const session = await auth();
-
-  //console.log('session: ', session);
-
-  if (!session) {
-    return (
-      <h1>Unauthorized</h1>
-    )
-  }
-
-  const user = session.user;
-
-  if (!user.emailVerified) {
-    return (
-      <EmailNotVerified email={user.email} />
-    )
-  }
-
-
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-primary`}
       >
-        <div className="flex h-screen">
-          <Sidebar />
-          <main className="flex-1 p-8">
-            <Header />
-            <div className="overflow-y-auto">
-              {children}
-            </div>
-          </main>
-        </div>
+        {children}
       </body>
     </html>
   );
