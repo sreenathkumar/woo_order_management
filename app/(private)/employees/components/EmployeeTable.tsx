@@ -1,22 +1,21 @@
 'use client'
 
 import { Badge } from "@/components/shadcn/badge"
-import { Button } from "@/components/shadcn/button"
 import { Checkbox } from "@/components/shadcn/checkbox"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shadcn/table"
-import { Pencil, Trash } from 'lucide-react'
-import { useState } from 'react'
+import UpdateEmployee from "./UpdateEmployee"
+import DeleteEmployee from "./DeleteEmployee"
+import { Button } from "@/components/shadcn/button"
+import { Trash } from "lucide-react"
 
 
-// Sample data
-const employees = [
-    { id: '1', name: 'John Doe', image: '/placeholder.svg?height=40&width=40', email: 'john@example.com', position: 'Developer', status: 'success' },
-    { id: '2', name: 'Jane Smith', image: '/placeholder.svg?height=40&width=40', email: 'jane@example.com', position: 'Designer', status: 'success' },
-    { id: '3', name: 'Bob Johnson', image: '/placeholder.svg?height=40&width=40', email: 'bob@example.com', position: 'Manager', status: 'success' },
-]
+type Props = {
+    employees: { id: string, name: string, email: string, status: string }[],
+    selectedItems: string[],
+    setSelectedItems: (items: string[]) => void
+}
 
-export default function EmployeeTable() {
-    const [selectedItems, setSelectedItems] = useState<string[]>([]);
+export default function EmployeeTable({ employees, selectedItems, setSelectedItems }: Props) {
 
     return (
         <div className="border rounded-lg">
@@ -38,7 +37,7 @@ export default function EmployeeTable() {
                         <TableHead>ID</TableHead>
                         <TableHead>Name</TableHead>
                         <TableHead>Email</TableHead>
-                        <TableHead>Position</TableHead>
+                        <TableHead>Role</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -69,17 +68,17 @@ export default function EmployeeTable() {
                                             : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100'
                                     }
                                 >
-                                    {transaction.status === 'completed' ? 'Completed' : 'Pending'}
+                                    {transaction.status}
                                 </Badge>
                             </TableCell>
                             <TableCell className="text-right">
-                                <div className="flex justify-end gap-2">
-                                    <Button variant="ghost" size="icon">
-                                        <Pencil className="h-4 w-4" />
-                                    </Button>
-                                    <Button variant="ghost" size="icon">
-                                        <Trash className="h-4 w-4" />
-                                    </Button>
+                                <div className="flex justify-end gap-4">
+                                    <UpdateEmployee employee={transaction} onUpdate={(updatedEmployee) => console.log(updatedEmployee)} />
+                                    <DeleteEmployee>
+                                        <Button variant="ghost" size="icon">
+                                            <Trash />
+                                        </Button>
+                                    </DeleteEmployee>
                                 </div>
                             </TableCell>
                         </TableRow>
