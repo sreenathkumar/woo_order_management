@@ -9,7 +9,8 @@ import {
     DialogTrigger,
 } from "@/components/shadcn/dialog"
 import { useState } from 'react'
-import EmployeeFrom from "./EmployeeForm"
+import AddEmployeeFrom from "./AddEmployeeForm"
+
 
 
 
@@ -27,7 +28,7 @@ export default function AddEmployee() {
                 <DialogHeader>
                     <DialogTitle className="font-bold text-2xl">Add Employee</DialogTitle>
                 </DialogHeader>
-                <EmployeeFrom />
+                <AddEmployeeFrom />
             </DialogContent>
         </Dialog>
     )

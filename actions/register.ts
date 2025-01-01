@@ -4,10 +4,6 @@ import dbConnect from "@/dbConnect";
 import { saltAndHashPassword } from "@/lib/password";
 import User from "@/models/userModel";
 import { z } from "zod";
-import crypto from 'crypto';
-import Token from "@/models/emailVerificationModel";
-import mongoose from "mongoose";
-import { sendVerificationEmail } from "./sendEmail";
 
 // Allowed email domains
 const allowedEmailDomains = ['gmail.com', 'yahoo.com', 'outlook.com'];
@@ -25,16 +21,19 @@ const formSchema = z.object({
     }, {
         message: 'Only Gmail, Yahoo, and Outlook emails are allowed.',
     }),
+    role: z.string({ message: "Role is required" })
 })
 
 //function to register a user
 const register = async (prevState: unknown, data: FormData) => {
-    const { name, email, password } = Object.fromEntries(data);
+    const { name, email, password, role } = Object.fromEntries(data);
     const validatedFields = formSchema.safeParse({
         name,
         email,
         password,
+        role
     });
+
 
     // Return early if the form data is invalid
     if (!validatedFields.success) {
@@ -44,76 +43,44 @@ const register = async (prevState: unknown, data: FormData) => {
             errors: validatedFields.error.flatten().fieldErrors,
         }
     }
-
-    //connect to the database
-    await dbConnect();
-
-    //check if the user already exists
-    const user = await User.findOne({ email });
-
-    if (user) {
-        return {
-            status: 'error',
-            errors: {
-                name: [],
-                email: ["An account with this email already exists"],
-                password: []
-            },
-            message: "Email already exists",
-        }
-    }
-
-    //initializing the DB transaction to insure email verification token and user are saved together
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
     try {
-        const hashPassword = await saltAndHashPassword(password as string);
-        const newUser = new User({ name, email, password: hashPassword });
+        //connect to the database
+        await dbConnect();
 
+        //check if the user already exists
+        const user = await User.findOne({ email });
 
-        //save the user
-        const user = await newUser.save({ session });
-
-        //create the email verification token
-        const verificationToken = crypto.randomBytes(32).toString('hex');
-        const token = new Token({ userId: user._id, token: verificationToken });
-
-        //save the token
-        await token.save({ session });
-
-        //commit the transaction
-        await session.commitTransaction();
-
-        //send the verification email
-        const verificationLink = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}&email=${email}`;
-
-        const isSent = await sendVerificationEmail(email as string, name as string, verificationLink);
-
-        if (!isSent) {
-            if (session) await session.abortTransaction();
+        if (user) {
             return {
                 status: 'error',
-                message: "An error occurred while sending the verification email. Please try again later!",
+                errors: {
+                    name: [],
+                    email: ["An account with this email already exists"],
+                    password: []
+                },
+                message: "Email already exists",
             }
         }
 
+        const hashPassword = await saltAndHashPassword(password as string);
+        const newUser = new User({ name, email, password: hashPassword, role });
+
+        await newUser.save();
+
+        //send success message
         return {
             status: 'success',
-            message: "User registered successfully. Please check your email to verify your account!",
+            message: "Employee registered successfully.",
         }
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-        if (session) await session.abortTransaction();
+
         return {
             status: 'error',
             message: error.message,
         }
-    } finally {
-        if (session) await session.endSession();
     }
-
 }
 
 export default register;

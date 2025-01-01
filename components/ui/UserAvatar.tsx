@@ -11,6 +11,7 @@ import {
 } from "@/components/shadcn/sidebar";
 
 import UserMenu from "./UserMenu";
+import { ChevronsUpDown } from "lucide-react";
 
 function UserAvatar({ userName, userEmail, userImage }: { userName: string, userEmail: string, userImage: string | undefined }) {
     return (
@@ -30,6 +31,7 @@ function UserAvatar({ userName, userEmail, userImage }: { userName: string, user
                                 <span className="truncate font-semibold">{userName}</span>
                                 <span className="truncate text-xs">{userEmail}</span>
                             </div>
+                            <ChevronsUpDown className="ml-auto size-4" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <UserMenu userName={userName} userEmail={userEmail} userImage={userImage} />

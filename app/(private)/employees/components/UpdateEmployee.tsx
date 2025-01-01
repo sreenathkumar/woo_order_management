@@ -10,11 +10,12 @@ import {
 } from "@/components/shadcn/dialog"
 import { Pencil } from 'lucide-react'
 import { useState } from 'react'
-import EmployeeFrom from './EmployeeForm'
+import UpdateEmployeeForm from "./UpdateEmployeeForm"
 
 
-export default function UpdateEmployee() {
-    const [open, setOpen] = useState(false)
+
+export default function UpdateEmployee({ data }: { data: { id: string, name: string, email: string, role: string } }) {
+    const [open, setOpen] = useState(false);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -27,7 +28,7 @@ export default function UpdateEmployee() {
                 <DialogHeader>
                     <DialogTitle className="font-bold text-2xl">Update Employee Information</DialogTitle>
                 </DialogHeader>
-                <EmployeeFrom />
+                <UpdateEmployeeForm data={data} />
             </DialogContent>
         </Dialog>
     )

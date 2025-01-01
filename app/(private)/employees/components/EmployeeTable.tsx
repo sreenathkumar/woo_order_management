@@ -10,9 +10,16 @@ import { Trash } from "lucide-react"
 
 
 type Props = {
-    employees: { id: string, name: string, email: string, status: string }[],
+    employees: { id: string, name: string, email: string, role: string, image?: string }[],
     selectedItems: string[],
     setSelectedItems: (items: string[]) => void
+}
+
+const roleColors: { [key: string]: string } = {
+    "user": "bg-red-100 text-red-600",
+    'clerk': 'bg-blue-100 text-blue-600',
+    'driver': 'bg-yellow-100 text-yellow-600',
+    'admin': 'bg-green-100 text-green-600'
 }
 
 export default function EmployeeTable({ employees, selectedItems, setSelectedItems }: Props) {
@@ -34,7 +41,6 @@ export default function EmployeeTable({ employees, selectedItems, setSelectedIte
                                 }}
                             />
                         </TableHead>
-                        <TableHead>ID</TableHead>
                         <TableHead>Name</TableHead>
                         <TableHead>Email</TableHead>
                         <TableHead>Role</TableHead>
@@ -42,38 +48,32 @@ export default function EmployeeTable({ employees, selectedItems, setSelectedIte
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {employees.map((transaction) => (
-                        <TableRow key={transaction.id}>
+                    {employees.map((employee) => (
+                        <TableRow key={employee.id}>
                             <TableCell>
                                 <Checkbox
-                                    checked={selectedItems.includes(transaction.id)}
+                                    checked={selectedItems.includes(employee.id)}
                                     onCheckedChange={(checked) => {
                                         if (checked) {
-                                            setSelectedItems([...selectedItems, transaction.id])
+                                            setSelectedItems([...selectedItems, employee.id])
                                         } else {
-                                            setSelectedItems(selectedItems.filter(id => id !== transaction.id))
+                                            setSelectedItems(selectedItems.filter(id => id !== employee.id))
                                         }
                                     }}
                                 />
                             </TableCell>
-                            <TableCell className="font-medium">{transaction.id}</TableCell>
-                            <TableCell>{transaction.name}</TableCell>
-                            <TableCell>{transaction.email}</TableCell>
+                            <TableCell>{employee.name}</TableCell>
+                            <TableCell>{employee.email}</TableCell>
                             <TableCell>
                                 <Badge
-                                    variant={transaction.status === 'completed' ? 'success' : 'warning'}
-                                    className={
-                                        transaction.status === 'completed'
-                                            ? 'bg-green-100 text-green-800 hover:bg-green-100'
-                                            : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100'
-                                    }
+                                    className={roleColors[employee.role] || 'bg-gray-100 text-gray-600'}
                                 >
-                                    {transaction.status}
+                                    {employee.role}
                                 </Badge>
                             </TableCell>
                             <TableCell className="text-right">
                                 <div className="flex justify-end gap-4">
-                                    <UpdateEmployee employee={transaction} onUpdate={(updatedEmployee) => console.log(updatedEmployee)} />
+                                    <UpdateEmployee data={employee} />
                                     <DeleteEmployee>
                                         <Button variant="ghost" size="icon">
                                             <Trash />
