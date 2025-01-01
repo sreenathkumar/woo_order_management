@@ -1,8 +1,9 @@
+import AdminDashboard from './components/AdminDashboard'
 
 async function DashboardPage() {
 
     return (
-        <h1>Dashboard</h1>
+        <AdminDashboard />
     )
 }
 
