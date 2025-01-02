@@ -3,6 +3,7 @@
 import dbConnect from "@/dbConnect";
 import { saltAndHashPassword } from "@/lib/password";
 import User from "@/models/userModel";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 // Allowed email domains
@@ -80,6 +81,8 @@ const register = async (prevState: unknown, data: FormData) => {
             status: 'error',
             message: error.message,
         }
+    } finally {
+        revalidatePath('/employees')
     }
 }
 
