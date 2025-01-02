@@ -1,8 +1,7 @@
 'use server'
 
-import dbConnect from "@/dbConnect"
+import dbConnect from "@/dbConnect";
 import User from "@/models/userModel";
-import { transformIdProperty } from "../lib/utils";
 import { z } from "zod";
 
 // Allowed email domains
@@ -33,7 +32,17 @@ export async function getAllEmployees() {
 
         //return the employees
         if (employees && employees.length > 0) {
-            return employees.map((employee) => transformIdProperty(employee));
+            const transformedEmployees = employees.map((item) => {
+                return {
+                    id: item._id?.toString() || item.email,
+                    name: item.name,
+                    email: item.email,
+                    role: item.role,
+                    image: item.image
+                }
+            });
+
+            return transformedEmployees;
         }
 
         return [];
@@ -97,6 +106,40 @@ export async function updateEmployee(id: string, data: FormData) {
                 name: ['An error occurred'],
                 email: ['An error occurred']
             }
+        }
+    }
+}
+
+//function to delete employees
+export async function deleteEmployees(ids: string[]) {
+
+    try {
+        //connect to the database
+        await dbConnect();
+
+        //query the database for the employees with the given ids and delete the employees
+        const employees = await User.deleteMany({ _id: { $in: ids } });
+
+        //return the employees
+        if (employees.deletedCount && employees.deletedCount > 0) {
+            return {
+                status: 'success',
+                message: 'Employees deleted successfully',
+            }
+        }
+
+        return {
+            status: 'error',
+            message: 'Employees not found',
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        console.log(error?.message)
+        return {
+            status: 'error',
+            message: 'An error occurred',
+
         }
     }
 }

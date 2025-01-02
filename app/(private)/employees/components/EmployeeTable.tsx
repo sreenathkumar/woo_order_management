@@ -48,7 +48,7 @@ export default function EmployeeTable({ employees, selectedItems, setSelectedIte
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {employees.map((employee) => (
+                    {employees.length > 0 ? employees.map((employee) => (
                         <TableRow key={employee.id}>
                             <TableCell>
                                 <Checkbox
@@ -74,7 +74,7 @@ export default function EmployeeTable({ employees, selectedItems, setSelectedIte
                             <TableCell className="text-right">
                                 <div className="flex justify-end gap-4">
                                     <UpdateEmployee data={employee} />
-                                    <DeleteEmployee>
+                                    <DeleteEmployee selectedItems={[employee.id]} setSelectedItems={setSelectedItems}>
                                         <Button variant="ghost" size="icon">
                                             <Trash />
                                         </Button>
@@ -82,7 +82,7 @@ export default function EmployeeTable({ employees, selectedItems, setSelectedIte
                                 </div>
                             </TableCell>
                         </TableRow>
-                    ))}
+                    )) : <TableRow><TableCell colSpan={5} className="text-center">No employees found</TableCell></TableRow>}
                 </TableBody>
             </Table>
         </div>
