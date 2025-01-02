@@ -1,5 +1,3 @@
-import { auth } from '@/auth';
-import EmailNotVerified from '@/components/ui/EmailNotVerified';
 import AppSidebar from '@/components/ui/AppSidebar';
 import React from 'react';
 
@@ -19,15 +17,6 @@ import {
 } from "@/components/shadcn/sidebar";
 
 async function DashboardLayout({ children }: { children: React.ReactNode }) {
-    const session = await auth();
-
-    const user = session?.user;
-
-    if (user && !user?.emailVerified) {
-        return (
-            <EmailNotVerified email={user.email} />
-        )
-    }
 
     return (
         <SidebarProvider>
