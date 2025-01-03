@@ -53,3 +53,10 @@ export function transformIdProperty(obj: Record<string, unknown>): TransformedOb
     // Return the transformed object
     return transformedObj;
 }
+
+// ==========================================
+// function which make the first letter of the string capital
+// ==========================================
+export function capitalize(str: string) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}

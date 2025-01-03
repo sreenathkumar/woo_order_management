@@ -1,20 +1,12 @@
 import AppSidebar from '@/components/ui/AppSidebar';
 import React from 'react';
-
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from "@/components/shadcn/breadcrumb";
 import { Separator } from "@/components/shadcn/separator";
 import {
     SidebarInset,
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/shadcn/sidebar";
+import AppBreadcrumb from '@/components/ui/AppBreadcrumb';
 
 async function DashboardLayout({ children }: { children: React.ReactNode }) {
 
@@ -26,19 +18,7 @@ async function DashboardLayout({ children }: { children: React.ReactNode }) {
                     <div className="flex items-center gap-2 px-4">
                         <SidebarTrigger className="-ml-1" />
                         <Separator orientation="vertical" className="mr-2 h-4" />
-                        <Breadcrumb>
-                            <BreadcrumbList>
-                                <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink href="#">
-                                        Building Your Application
-                                    </BreadcrumbLink>
-                                </BreadcrumbItem>
-                                <BreadcrumbSeparator className="hidden md:block" />
-                                <BreadcrumbItem>
-                                    <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                                </BreadcrumbItem>
-                            </BreadcrumbList>
-                        </Breadcrumb>
+                        <AppBreadcrumb />
                     </div>
                 </header>
                 {children}
