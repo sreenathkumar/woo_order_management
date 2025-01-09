@@ -1,38 +1,31 @@
-import SearchField from "@/components/ui/SearchField"
-import OrdersTable from "./components/OrdersTable"
 import { Button } from "@/components/shadcn/button"
+import SearchField from "@/components/ui/SearchField"
 import { ListFilter } from "lucide-react"
+import { Suspense } from "react"
+import OrdersTable from "./components/OrdersTable"
+import { SelectedOrderProvider } from "@/context/SelectedOrderCtx"
+import AssignOrderBtn from "./components/AssignOrderBtn"
 
-const orders = [
-    {
-        id: '12345',
-        name: 'John Doe',
-        city: 'New York',
-        address: '123 Main St',
-        phone: '123-456-7890',
-        amount: '$100.00',
-        status: 'Pending',
-        asignee: 'John Doe'
-    }
-]
 
-function OrdersPage() {
+async function OrdersPage() {
+
     return (
-        <div className="py-8">
-            <div className="flex justify-between items-center mb-6">
-                <SearchField className='w-80' />
-                <div className="flex gap-2 items-center">
-
-                    <Button variant="outline" size="sm">
-                        <ListFilter className="h-4 w-4" />
-                        Filters
-                    </Button>
-                    <Button size="sm">
-                        Assign Order
-                    </Button>
+        <div className="py-8 px-4 flex flex-col flex-1 overflow-auto">
+            <SelectedOrderProvider>
+                <div className="flex justify-between items-center mb-6">
+                    <SearchField className='w-80' />
+                    <div className="flex gap-2 items-center">
+                        <Button variant="outline" size="sm">
+                            <ListFilter className="h-4 w-4" />
+                            Filters
+                        </Button>
+                        <AssignOrderBtn />
+                    </div>
                 </div>
-            </div>
-            <OrdersTable orders={orders} />
+                <Suspense fallback={<div>Loading...</div>}>
+                    <OrdersTable />
+                </Suspense>
+            </SelectedOrderProvider>
         </div>
     )
 }

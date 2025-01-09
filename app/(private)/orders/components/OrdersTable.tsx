@@ -43,7 +43,7 @@ function OrdersTable() {
         <div className="border rounded-lg w-full overflow-x-auto">
             <Table className="border-collapse">
                 <TableHeader>
-                    <TableHeadRowItem columns={tableColumns} />
+                    <TableHeadRowItem columns={tableColumns} orderIds={initailOrders.map(order => order.order_id)} />
                 </TableHeader>
                 <TableBody>
                     {initailOrders.length > 0 ? initailOrders.map((order: OrderType) => (
