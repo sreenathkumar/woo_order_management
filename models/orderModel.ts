@@ -38,12 +38,18 @@ const orderSchema = new mongoose.Schema({
         required: true,
         default: "pending"
     },
+    asignee_name: {
+        type: String,
+        default: ''
+    },
     asignee: {
         type: Schema.Types.ObjectId,
         ref: "User",
         default: null
-    }
-})
+    },
+    date_created_gmt: { type: Date, required: true },
+    date_modified_gmt: { type: Date, required: true },
+}, { timestamps: true })
 
 const Order = mongoose.models.Order || mongoose.model("Order", orderSchema);
 
