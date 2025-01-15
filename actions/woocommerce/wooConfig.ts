@@ -8,6 +8,11 @@ export const wooApi = new WooCommerceRestApi({
     version: "wc/v3"
 });
 
+interface ExtendedOrderType extends OrderType {
+    date_created_gmt: string;
+    date_modified_gmt: string;
+}
+
 type MetaDataItem = {
     id: number;
     key: string;
@@ -39,7 +44,7 @@ const keysToExtract: (keyof BillingData)[] = [
 export const prepareOrder = (order: any) => {
     if (!order) return null;
 
-    const { id, total, billing: { first_name, state }, meta_data } = order;
+    const { id, total, billing: { first_name, state }, date_created_gmt, date_modified_gmt, meta_data } = order;
 
     // Extract the desired data
     const billingData: BillingData = meta_data
@@ -62,8 +67,10 @@ export const prepareOrder = (order: any) => {
             floor_apt: billingData._billing_floor_apt || '',
         },
         phone: billingData._billing_phone_2 || '',
+        date_created_gmt: date_created_gmt || '',
+        date_modified_gmt: date_modified_gmt || '',
         status: 'Processing',
         asignee: null,
-    } satisfies OrderType
+    } satisfies ExtendedOrderType
 
 }

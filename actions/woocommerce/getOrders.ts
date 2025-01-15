@@ -1,59 +1,82 @@
 'use server'
 
-import { OrderType } from "@/types/OrderType";
-import { prepareOrder, wooApi } from "./wooConfig"
 import dbConnect from "@/dbConnect";
 import Order from "@/models/orderModel";
+import getFilteredOrders from "./getFilteredOrders";
 
-const fetchOrders: ({ status }: { status: string }) => Promise<OrderType[]> = async ({ status }: { status: string }) => {
+
+//limit the number of orders for the db query result
+const LIMIT = Number(process.env.ORDER_QUERY_LIMIT) || 10
+
+interface SearchParams {
+    query?: string | string[];
+    page?: number;
+}
+
+
+const getAllOrders = async (params: SearchParams = {}) => {
+    const { query = '', page = 1 } = params;
+
+
+    // Calculate the number of documents to skip
+    const skip = (page - 1) * LIMIT;
+
+    let searchQuery: string = '';
+
+    if (Array.isArray(query)) {
+        searchQuery = query.join(' ');
+    } else {
+        searchQuery = query
+    }
+
     try {
-        const res = await wooApi.get('orders', { status });
+        /* If there are no orders in the database, fetch them from the API
+        ** then insert them into the database
+        ** and return them as server action response
+        */
+        if (!searchQuery) {
+            await dbConnect();
 
-        const totalPages = res.headers['x-wp-totalpages'];
+            //retrieve the orders from the database
+            const dbOrders = await Order.find({})
+                .select('-_id -__v -createdAt -updatedAt -date_created_gmt -date_modified_gmt')
+                .limit(LIMIT)
+                .skip(skip)
+                .lean();
 
-        //remove unnecessary data and make it like OrderType
+            //eliminate the extra data returned from the woo api
+            const orders = dbOrders.map((item) => {
+                return {
+                    order_id: item.order_id,
+                    name: item.name,
+                    city: item.city,
+                    address: item.address,
+                    phone: item.phone,
+                    amount: item.amount,
+                    status: item.status,
+                    asignee: item.asignee
+                }
+            })
 
-        const formatedOrder = res.data.map((order: unknown) => prepareOrder(order));
-        let allOrders = [...formatedOrder];
+            if (orders.length > 0) {
+                return orders
+            }
 
-        for (let i = 2; i <= parseInt(totalPages); i++) {
-            const res = await wooApi.get('orders', { status, page: i });
-            allOrders = [...allOrders, ...res.data.map((order: unknown) => prepareOrder(order))];
+        } else {
+            //call the filtered orders function which will 
+            //return the orders based on the search params
+            const filteredOrders = await getFilteredOrders({ query: searchQuery, skip, limit: LIMIT });
+
+            if (filteredOrders.length > 0) {
+                return filteredOrders
+            }
         }
-
-        console.log('allOrders: ', allOrders.length);
-
-        return allOrders;
+        return [];
     } catch (error) {
-        console.log(error)
+        console.log('error in getAllOrders: ', error);
         return [];
     }
 }
 
-const getAllOrders = async () => {
-
-    try {
-        await dbConnect();
-
-        const dbOrders = await Order.find({}).select('-_id -__v');
-
-        if (dbOrders.length === 0) {
-            const fetchedData = await fetchOrders({ status: 'processing' });
-
-            if (fetchedData.length > 0) {
-                await Order.insertMany(fetchedData);
-                return JSON.stringify(fetchedData);
-            }
-            return null;
-        } else {
-            return JSON.stringify(dbOrders);
-        }
-    } catch (error) {
-        console.log(error);
-        return null;
-    }
-
-
-};
 
 export default getAllOrders
