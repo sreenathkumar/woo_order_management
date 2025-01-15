@@ -60,3 +60,21 @@ export function transformIdProperty(obj: Record<string, unknown>): TransformedOb
 export function capitalize(str: string) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+// ==========================================
+// parse the search params
+// ==========================================
+export function decodeSearchParams<T = Record<string, string | string[] | undefined>>(
+    searchParams: Record<string, string | string[] | undefined>
+): T {
+    const decodedParams: Record<string, string | string[]> = {};
+
+    // Iterate through the keys of the plain object and assign values to the decodedParams
+    for (const key in searchParams) {
+        if (searchParams[key] !== undefined) {
+            decodedParams[key] = searchParams[key] as string | string[];
+        }
+    }
+
+    return decodedParams as T;
+}
