@@ -1,26 +1,72 @@
 'use client'
 
+import { getAllDrivers } from "@/actions/employee"
 import { Button } from "@/components/shadcn/button"
-
-import UpdateOptions from "../../employees/components/UpdateOptions"
 import { useSelectedOrder } from "@/context/SelectedOrderCtx"
+import { useEffect, useState } from "react"
 import OrderBadge from "./OrderBadge"
-import { useState } from "react"
-//import { useState } from 'react'
+import { AssigneeUpdateOptions, StatusUpdateOptions } from "./UpdateOptions"
+import updateOrders from "@/actions/woocommerce/updateOrders"
+import { useRouter } from "next/navigation"
 
-// Mock data for demonstration
-const mockSelectedOrders = ['ORD-001', 'ORD-002', 'ORD-003']
-const mockAssignees = ['John Doe', 'Jane Smith', 'Alice Johnson']
-const mockStatuses = ['Processing', 'Shipped', 'Delivered', 'Cancelled']
+export interface DriversType {
+    id: string,
+    name: string,
+    image?: string
+}
+
+const statuses = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
 
 function UpdateOrders() {
     const { selectedOrder, setSelectedOrder } = useSelectedOrder();
     const [removedOrders, setRemovedOrders] = useState<string[]>([]);
+    const [drivers, setDrivers] = useState<DriversType[]>([]);
+    const router = useRouter()
 
     const removeOrder = (orderId: string) => {
         setSelectedOrder(selectedOrder.filter(id => id !== orderId));
         setRemovedOrders([...removedOrders, orderId]);
     }
+
+    //handle update order status
+    const handleUpdateStatus = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        if (selectedOrder.length > 0) {
+
+            const formData = new FormData(e.currentTarget);
+            const { assignee, status } = Object.fromEntries(formData);
+            const assigneeName = drivers.find(driver => driver.id === String(assignee))?.name;
+
+            if (assignee && status && assigneeName) {
+                //update the orders
+                const res = await updateOrders({ order_ids: selectedOrder, assignee: String(assignee), status: String(status), asignee_name: assigneeName });
+
+                if (res && res.status === 'success') {
+                    setSelectedOrder([]);
+                    setRemovedOrders([]);
+
+                    router.refresh();
+                    console.log('res: ', res);
+                }
+            }
+        }
+
+    }
+
+    //fetch the drivers
+    const fetchDrivers = async () => {
+        const res = await getAllDrivers();
+
+        if (res && res.length > 0) {
+            setDrivers([...res]);
+        }
+    }
+
+    //update drivers on page load
+    useEffect(() => {
+        fetchDrivers();
+    }, [])
 
     return (
         <div className="flex flex-col gap-6">
@@ -40,9 +86,9 @@ function UpdateOrders() {
                     )
                 }
             </div>
-            <form className="space-y-6">
-                <UpdateOptions options={mockAssignees} label="Assignee" id="assignee" placeholder="Select an assignee" />
-                <UpdateOptions options={mockStatuses} label="Status" id="status" placeholder="Select a status" />
+            <form className="space-y-6" onSubmit={handleUpdateStatus}>
+                <AssigneeUpdateOptions options={drivers} label="Assignee" id="assignee" placeholder="Select an assignee" />
+                <StatusUpdateOptions options={statuses} label="Status" id="status" placeholder="Select a status" />
 
                 <Button type="submit">Update Orders</Button>
             </form>

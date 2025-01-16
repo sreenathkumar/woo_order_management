@@ -28,7 +28,7 @@ export async function getAllEmployees() {
         await dbConnect();
 
         //query the database for all employees
-        const employees = await User.find({ role: { $ne: 'admin' } }).select(['_id', 'name', 'email', 'role', 'image']).lean();
+        const employees = await User.find({}).select(['_id', 'name', 'email', 'role', 'image']).lean();
 
         //return the employees
         if (employees && employees.length > 0) {
@@ -141,5 +141,36 @@ export async function deleteEmployees(ids: string[]) {
             message: 'An error occurred',
 
         }
+    }
+}
+
+//function get all the drivers
+export async function getAllDrivers() {
+    try {
+        //connect to the database
+        await dbConnect();
+
+        //query the database for all drivers
+        const drivers = await User.find({ role: 'driver' }).select(['_id', 'name', 'email', 'role', 'image']).lean();
+
+        //return the drivers
+        if (drivers && drivers.length > 0) {
+            const transformedDrivers = drivers.map((item) => {
+                return {
+                    id: item._id?.toString() || item.email,
+                    name: item.name,
+                    image: item.image
+                }
+            });
+
+            return transformedDrivers;
+        }
+
+        return [];
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        console.log('error in getting drivers: ', error?.message);
+        return [];
     }
 }
