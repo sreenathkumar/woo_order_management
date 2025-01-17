@@ -15,7 +15,7 @@ function StatusUpdateOptions({ options, label, id, placeholder }: { options?: st
             <label htmlFor={id} className="text-sm font-medium">
                 {label}
             </label>
-            <Select required name="status">
+            <Select name="status">
                 <SelectTrigger id={id}>
                     <SelectValue placeholder={placeholder} />
                 </SelectTrigger>
@@ -37,7 +37,7 @@ function AssigneeUpdateOptions({ options, label, id, placeholder }: { options?: 
             <label htmlFor={id} className="text-sm font-medium">
                 {label}
             </label>
-            <Select required name="assignee" >
+            <Select name="assignee" >
                 <SelectTrigger id={id}>
                     <SelectValue placeholder={placeholder} />
                 </SelectTrigger>

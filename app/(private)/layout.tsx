@@ -7,6 +7,7 @@ import {
     SidebarTrigger,
 } from "@/components/shadcn/sidebar";
 import AppBreadcrumb from '@/components/ui/AppBreadcrumb';
+import { Toaster } from "react-hot-toast";
 
 async function DashboardLayout({ children }: { children: React.ReactNode }) {
 
@@ -22,6 +23,7 @@ async function DashboardLayout({ children }: { children: React.ReactNode }) {
                     </div>
                 </header>
                 {children}
+                <Toaster />
             </SidebarInset>
         </SidebarProvider>
     )

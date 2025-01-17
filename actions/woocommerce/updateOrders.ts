@@ -4,13 +4,13 @@ import dbConnect from "@/dbConnect";
 import Order from "@/models/orderModel";
 
 interface UpdateOrdertype {
-    assignee: string,
-    asignee_name: string,
-    status: string,
+    assignee?: string,
+    assignee_name?: string,
+    status?: string,
     order_ids: string[]
 }
 
-async function updateOrders({ assignee, asignee_name, status, order_ids }: UpdateOrdertype) {
+async function updateOrders({ assignee, assignee_name, status, order_ids }: UpdateOrdertype) {
 
     if (!order_ids || order_ids.length === 0) return {
         status: 'error',
@@ -26,7 +26,7 @@ async function updateOrders({ assignee, asignee_name, status, order_ids }: Updat
             order_id: { $in: order_ids }
         }, {
             asignee: assignee === 'none' ? null : assignee,
-            asignee_name: asignee_name,
+            asignee_name: assignee === 'none' ? '' : assignee_name,
             status: status
         });
 

@@ -8,29 +8,39 @@ import OrderBadge from "./OrderBadge"
 import { AssigneeUpdateOptions, StatusUpdateOptions } from "./UpdateOptions"
 import updateOrders from "@/actions/woocommerce/updateOrders"
 import { useRouter } from "next/navigation"
+import toast from "react-hot-toast"
 
+//type for drivers object
 export interface DriversType {
     id: string,
     name: string,
     image?: string
 }
 
+//type for update orders form
+interface UpdateOrderType {
+    order_ids: string[],
+    assignee?: string,
+    assignee_name?: string
+    status?: string
+}
+
 const statuses = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
 
-function UpdateOrders() {
+function UpdateOrders({ closeModal }: { closeModal: () => void }) {
     const { selectedOrder, setSelectedOrder } = useSelectedOrder();
-    const [removedOrders, setRemovedOrders] = useState<string[]>([]);
     const [drivers, setDrivers] = useState<DriversType[]>([]);
-    const router = useRouter()
+    const router = useRouter();
 
     const removeOrder = (orderId: string) => {
         setSelectedOrder(selectedOrder.filter(id => id !== orderId));
-        setRemovedOrders([...removedOrders, orderId]);
     }
 
     //handle update order status
     const handleUpdateStatus = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        const toastId = toast.loading('Updating orders...');
 
         if (selectedOrder.length > 0) {
 
@@ -38,18 +48,32 @@ function UpdateOrders() {
             const { assignee, status } = Object.fromEntries(formData);
             const assigneeName = drivers.find(driver => driver.id === String(assignee))?.name;
 
-            if (assignee && status && assigneeName) {
+            //constract the update object
+            const updateObj: UpdateOrderType = { order_ids: selectedOrder };
+
+            if (assignee || status) {
+
+                if (assignee) updateObj.assignee = assignee.toString();
+                if (status) updateObj.status = status.toString();
+                if (assigneeName) updateObj.assignee_name = assigneeName
+
                 //update the orders
-                const res = await updateOrders({ order_ids: selectedOrder, assignee: String(assignee), status: String(status), asignee_name: assigneeName });
+                const res = await updateOrders(updateObj);
 
                 if (res && res.status === 'success') {
                     setSelectedOrder([]);
-                    setRemovedOrders([]);
-
                     router.refresh();
-                    console.log('res: ', res);
+                    toast.success(res.message, { id: toastId });
+                    closeModal();
+                } else {
+                    toast.error(res.message, { id: toastId });
                 }
+
+            } else {
+                toast.error('Please update at least one field', { id: toastId });
             }
+        } else {
+            toast.error('Please select at least one order', { id: toastId });
         }
 
     }
@@ -76,15 +100,6 @@ function UpdateOrders() {
                     {selectedOrder.length > 0 && selectedOrder.map(orderId => <OrderBadge key={orderId} onClose={() => removeOrder(orderId)}>{orderId} </OrderBadge>)
                     }
                 </div>
-                {
-                    removedOrders.length > 0 && (
-                        <div className="flex flex-col gap-2 border rounded p-4 absolute bottom-2 left-0 w-full">
-                            {
-                                removedOrders.map(orderId => <span key={orderId} className="">{orderId}</span>)
-                            }
-                        </div>
-                    )
-                }
             </div>
             <form className="space-y-6" onSubmit={handleUpdateStatus}>
                 <AssigneeUpdateOptions options={drivers} label="Assignee" id="assignee" placeholder="Select an assignee" />
