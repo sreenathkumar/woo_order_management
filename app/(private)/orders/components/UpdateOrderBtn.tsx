@@ -5,15 +5,20 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useSelectedOrder } from '@/context/SelectedOrderCtx'
 import { DialogDescription } from '@radix-ui/react-dialog'
 import UpdateOrders from './UpdateOrders'
+import { useState } from 'react'
 
 
-function AssignOrderBtn() {
+function UpdateOrderBtn() {
     const { selectedOrder } = useSelectedOrder();
+    const [isOpen, setIsOpen] = useState(false);
+
+    //close the modal
+    const closeModal = () => setIsOpen(!isOpen);
     return (
-        <Dialog>
+        <Dialog open={isOpen} onOpenChange={closeModal}>
             <DialogTrigger asChild>
                 <Button size="sm" disabled={selectedOrder?.length === 0}>
-                    Assign Order
+                    Update Order
                 </Button>
             </DialogTrigger>
             <DialogContent>
@@ -22,10 +27,10 @@ function AssignOrderBtn() {
                     <DialogDescription>Change the assignee and status for the selected orders.</DialogDescription>
                 </DialogHeader>
 
-                <UpdateOrders />
+                <UpdateOrders closeModal={closeModal} />
             </DialogContent>
         </Dialog>
     )
 }
 
-export default AssignOrderBtn
+export default UpdateOrderBtn

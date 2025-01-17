@@ -4,7 +4,7 @@ import { SelectedOrderProvider } from "@/context/SelectedOrderCtx"
 import { decodeSearchParams } from "@/lib/utils"
 import { ListFilter } from "lucide-react"
 import { Suspense } from "react"
-import AssignOrderBtn from "./components/AssignOrderBtn"
+import AssignOrderBtn from "./components/UpdateOrderBtn"
 import OrdersTable from "./components/OrdersTable"
 import SyncBtn from "./components/SyncBtn"
 
