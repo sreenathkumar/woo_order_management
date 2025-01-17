@@ -13,7 +13,7 @@ function EmployeeTableWrapper({ employees }: { employees: { id: string, name: st
 
 
     return (
-        <div className="py-8 px-4">
+        <div className="py-8">
             <div className="flex justify-between items-center mb-6">
                 <SearchField className='w-80' />
                 <div className="flex gap-2 items-center">

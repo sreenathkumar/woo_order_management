@@ -2,7 +2,7 @@ import AnalyticsCard from "./AnalyticsCard"
 
 function AdminDashboard() {
     return (
-        <div className="flex flex-1 flex-col gap-4 px-4 py-8">
+        <div className="flex flex-1 flex-col gap-4 py-8">
             <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                 <div className="aspect-video rounded-xl bg-muted/50">
                     <AnalyticsCard />
