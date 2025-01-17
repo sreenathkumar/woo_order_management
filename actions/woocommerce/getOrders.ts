@@ -54,7 +54,7 @@ const getAllOrders = async (params: SearchParams = {}) => {
                     phone: item.phone,
                     amount: item.amount,
                     status: item.status,
-                    asignee: item.asignee
+                    asignee: item.asignee?.toString()
                 }
             })
 
