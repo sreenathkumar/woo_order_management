@@ -15,6 +15,7 @@ import {
 import { useSidebar } from "../shadcn/sidebar";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 function UserMenu({ userName, userEmail, userImage }: { userName: string, userEmail: string, userImage: string | undefined }) {
     const { isMobile } = useSidebar();
@@ -50,10 +51,12 @@ function UserMenu({ userName, userEmail, userImage }: { userName: string, userEm
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-                <DropdownMenuItem>
-                    <BadgeCheck />
-                    Account
-                </DropdownMenuItem>
+                <Link href="/profile">
+                    <DropdownMenuItem >
+                        <BadgeCheck />
+                        Account
+                    </DropdownMenuItem>
+                </Link>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout}>
