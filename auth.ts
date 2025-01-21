@@ -47,12 +47,14 @@ export const { handlers: { GET, POST }, signIn, signOut, auth } = NextAuth({
     ],
 
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user, trigger, session }) {
+            if (trigger === 'update') {
+                return { ...token, ...session.user }
+            }
             if (user) {
                 token.emailVerified = user.emailVerified || null;
                 token.role = user.role;
                 token.image = user.image;
-
             }
             return token
         },

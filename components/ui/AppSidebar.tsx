@@ -1,4 +1,3 @@
-
 import { auth } from "@/auth"
 import {
   Sidebar,
@@ -9,7 +8,7 @@ import {
 } from "@/components/shadcn/sidebar"
 import { HelpCircle, IdCard, LayoutDashboard, Package } from 'lucide-react'
 import MainNav from "./MainNav"
-import UserAvatar from "./UserAvatar"
+import User from "./User"
 
 const navItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
@@ -25,6 +24,7 @@ async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }
   const user = session.user;
 
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader className="py-6 border-b mb-6">
@@ -34,7 +34,7 @@ async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <MainNav items={navItems} />
       </SidebarContent>
       <SidebarFooter>
-        {user && <UserAvatar userName={user.name} userEmail={user.email} userImage={user.image} />}
+        {user && <User />}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

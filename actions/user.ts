@@ -1,8 +1,12 @@
 'use server'
 
+import { auth, unstable_update } from "@/auth";
 import dbConnect from "@/dbConnect";
 import User from "@/models/userModel";
 import { UserProfileType } from "@/types/UserType";
+import { UTApi } from "uploadthing/server";
+
+const utapi = new UTApi({});
 
 async function getUser({ userId }: { userId: string }) {
     //check if userId exist
@@ -85,4 +89,52 @@ async function updateProfile({ email, name, address, phone }: { email: string, n
 
 }
 
-export { getUser, updateProfile }
+async function updateProfilePhoto(formdata: FormData) {
+    //get the image from the formdata
+    const avatar = formdata.get('avatar') as File;
+    const email = formdata.get('email') as string;
+
+    //upload it to uploadthing
+    if (email && avatar) {
+        try {
+            const response = await utapi.uploadFiles(avatar);
+
+            if (!response.error && response.data) {
+                const { url } = response.data;
+
+                //update the user in the database
+                await dbConnect();
+
+                const user = await User.findOneAndUpdate({ email }, { $set: { image: url } }, { new: true });
+
+                if (!user) {
+                    return {
+                        status: 'error',
+                        message: "There is no user with this email",
+                    }
+                }
+
+                return {
+                    status: 'success',
+                    message: "Profile photo updated successfully",
+                    url: url
+                }
+            }
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+            console.log('error in uploading image: ', error.message);
+            return {
+                status: 'error',
+                message: error.message
+            }
+        }
+
+    }
+
+    //update the db user
+
+    //return the response
+}
+
+export { getUser, updateProfile, updateProfilePhoto }

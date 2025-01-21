@@ -19,6 +19,7 @@ async function verifyUser({ email, password }: { email: string, password: string
             return {
                 email: user?.email,
                 name: user?.name,
+                image: user?.image,
                 emailVerified: user?.emailVerified
             };
         } else {

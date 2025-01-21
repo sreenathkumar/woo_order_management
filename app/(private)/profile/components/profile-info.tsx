@@ -7,10 +7,12 @@ import { updateProfileSchema } from '@/lib/zod';
 import toast from 'react-hot-toast';
 import { Input } from '@/components/shadcn/input';
 import { updateProfile } from '@/actions/user';
+import { useSession } from 'next-auth/react';
 
 function ProfileInformation({ user }: { user?: UserProfileType }) {
     const [initialUser, setInitialUser] = React.useState<UserProfileType | undefined>(user);
     const [mode, setMode] = React.useState<'edit' | 'view'>('view');
+    const { data: session, update } = useSession();
 
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -41,6 +43,9 @@ function ProfileInformation({ user }: { user?: UserProfileType }) {
             if (res?.status === 'success') {
                 setInitialUser(res.data);
                 setMode('view');
+
+                //update name in session
+                update({ ...session, user: { ...session?.user, name: validatedData.name } });
                 toast.success(res.message, { id: toastId });
             } else {
                 toast.error(res?.message, { id: toastId });

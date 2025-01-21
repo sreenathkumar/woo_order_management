@@ -8,24 +8,27 @@ import {
 } from "@/components/shadcn/sidebar";
 import AppBreadcrumb from '@/components/ui/AppBreadcrumb';
 import { Toaster } from "react-hot-toast";
+import { SessionProvider } from 'next-auth/react';
 
 async function DashboardLayout({ children }: { children: React.ReactNode }) {
 
     return (
-        <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset className='overflow-hidden px-4'>
-                <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-                    <div className="flex items-center gap-2">
-                        <SidebarTrigger className="-ml-1" />
-                        <Separator orientation="vertical" className="mr-2 h-4" />
-                        <AppBreadcrumb />
-                    </div>
-                </header>
-                {children}
-                <Toaster />
-            </SidebarInset>
-        </SidebarProvider>
+        <SessionProvider>
+            <SidebarProvider>
+                <AppSidebar />
+                <SidebarInset className='overflow-hidden px-4'>
+                    <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+                        <div className="flex items-center gap-2">
+                            <SidebarTrigger className="-ml-1" />
+                            <Separator orientation="vertical" className="mr-2 h-4" />
+                            <AppBreadcrumb />
+                        </div>
+                    </header>
+                    {children}
+                    <Toaster />
+                </SidebarInset>
+            </SidebarProvider>
+        </SessionProvider>
     )
 }
 
