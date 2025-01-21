@@ -2,6 +2,7 @@
 // also revalidate the path to show the updated data
 
 import { prepareOrder } from "@/actions/woocommerce/wooConfig";
+import { auth } from "@/auth";
 import dbConnect from "@/dbConnect";
 import Order from "@/models/orderModel";
 import { OrderType } from "@/types/OrderType";
@@ -11,6 +12,14 @@ const listeners: Set<(data: any) => void> = new Set()
 
 
 export async function POST(request: Request) {
+    const session = auth();
+
+    if (!session) {
+        return new Response('Unauthorized', {
+            status: 401,
+        })
+    }
+
     try {
         const res = await request.json();
 
