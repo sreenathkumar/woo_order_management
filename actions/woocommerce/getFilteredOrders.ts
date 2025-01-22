@@ -32,6 +32,7 @@ async function getFilteredOrders(params: SearchParams) {
             ],
         })
             .select('-_id -__v -createdAt -updatedAt -date_created_gmt -date_modified_gmt')
+            .populate('asignee', ['name', 'image'])
             .limit(limit)
             .skip(skip)
             .lean()
@@ -46,7 +47,11 @@ async function getFilteredOrders(params: SearchParams) {
                 phone: item.phone,
                 amount: item.amount,
                 status: item.status,
-                asignee: item.asignee?.toString()
+                asignee: {
+                    id: item.asignee?._id.toString(),
+                    name: item.asignee?.name,
+                    image: item.asignee?.image
+                }
             }
         });
 

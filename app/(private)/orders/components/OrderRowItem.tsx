@@ -2,6 +2,7 @@ import { Badge } from "@/components/shadcn/badge"
 import { TableCell, TableRow } from "@/components/shadcn/table"
 import { OrderType } from "@/types/OrderType"
 import OrderCheckbox from "./OrderCheckbox"
+import Image from "next/image"
 
 function OrderRowItem({ order, children }: { order: OrderType, children: React.ReactNode }) {
 
@@ -28,7 +29,7 @@ function OrderRowItem({ order, children }: { order: OrderType, children: React.R
                     {order.status}
                 </Badge>
             </TableCell>
-            <TableCell>{order.asignee}</TableCell>
+            <TableAssigneeCell assignee={order.asignee} />
             <TableCell className="text-right">
                 <div className="flex justify-end gap-4">
                     {children}
@@ -75,5 +76,18 @@ function TableAddressCell({
                 : <p>No address available</p>}
         </TableCell>
     );
+}
+
+//Show the assignee name and image in the table cell
+function TableAssigneeCell({ assignee }: { assignee: { id?: string, name?: string, image?: string } | null }) {
+    return (
+        <TableCell>
+            {(assignee?.name && assignee.image) ?
+                <div className="flex items-center gap-3 w-full">
+                    <Image src={assignee.image} alt={assignee.name || 'assignee_image'} width={32} height={32} className="w-8 h-8 rounded-full" />
+                    <span>{assignee.name}</span>
+                </div> : assignee?.name}
+        </TableCell>
+    )
 }
 export default OrderRowItem

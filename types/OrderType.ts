@@ -12,5 +12,9 @@ export interface OrderType {
     phone: string,
     amount: string,
     status: string,
-    asignee: string | null
+    asignee: {
+        id?: string,
+        name?: string,
+        image?: string
+    } | null
 }

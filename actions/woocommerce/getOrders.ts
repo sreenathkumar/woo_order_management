@@ -3,6 +3,7 @@
 import dbConnect from "@/dbConnect";
 import Order from "@/models/orderModel";
 import getFilteredOrders from "./getFilteredOrders";
+import User from "@/models/userModel";
 
 
 //limit the number of orders for the db query result
@@ -40,9 +41,12 @@ const getAllOrders = async (params: SearchParams = {}) => {
             //retrieve the orders from the database
             const dbOrders = await Order.find({})
                 .select('-_id -__v -createdAt -updatedAt -date_created_gmt -date_modified_gmt')
+                .populate('asignee', ['name', 'image'], User)
                 .limit(LIMIT)
                 .skip(skip)
                 .lean();
+
+            console.log('dbOrders: ', dbOrders);
 
             //eliminate the extra data returned from the woo api
             const orders = dbOrders.map((item) => {
@@ -54,7 +58,11 @@ const getAllOrders = async (params: SearchParams = {}) => {
                     phone: item.phone,
                     amount: item.amount,
                     status: item.status,
-                    asignee: item.asignee?.toString()
+                    asignee: {
+                        id: item.asignee?._id?.toString() || '',
+                        name: item.asignee?.name,
+                        image: item.asignee?.image
+                    }
                 }
             })
 
