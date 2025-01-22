@@ -25,7 +25,7 @@ interface UpdateOrderType {
     status?: string
 }
 
-const statuses = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
+const statuses = ['Processing', 'Delivered', 'Cash Paid', 'Link Paid', 'Unpaid'];
 
 function UpdateOrders({ closeModal }: { closeModal: () => void }) {
     const { selectedOrder, setSelectedOrder } = useSelectedOrder();
