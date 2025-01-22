@@ -46,8 +46,6 @@ const getAllOrders = async (params: SearchParams = {}) => {
                 .skip(skip)
                 .lean();
 
-            console.log('dbOrders: ', dbOrders);
-
             //eliminate the extra data returned from the woo api
             const orders = dbOrders.map((item) => {
                 return {
