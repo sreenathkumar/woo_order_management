@@ -4,7 +4,7 @@ import { SelectedOrderProvider } from "@/context/SelectedOrderCtx"
 import { decodeSearchParams } from "@/lib/utils"
 import { ListFilter } from "lucide-react"
 import { Suspense } from "react"
-import AssignOrderBtn from "./components/UpdateOrderBtn"
+import UpdateOrderBtn from "./components/UpdateOrderBtn"
 import OrdersTable from "./components/OrdersTable"
 import SyncBtn from "./components/SyncBtn"
 
@@ -27,7 +27,7 @@ async function OrdersPage({ searchParams }: { searchParams: SearchParams }) {
                             <ListFilter className="h-4 w-4" />
                             Filters
                         </Button>
-                        <AssignOrderBtn />
+                        <UpdateOrderBtn />
                     </div>
                 </div>
                 <Suspense fallback={<div>Loading table data...</div>}>

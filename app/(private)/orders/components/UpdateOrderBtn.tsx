@@ -1,9 +1,8 @@
 'use client'
 
 import { Button } from '@/components/shadcn/button'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/shadcn/dialog'
 import { useSelectedOrder } from '@/context/SelectedOrderCtx'
-import { DialogDescription } from '@radix-ui/react-dialog'
 import UpdateOrders from './UpdateOrders'
 import { useState } from 'react'
 
