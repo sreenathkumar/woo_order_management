@@ -12,11 +12,13 @@ const LIMIT = Number(process.env.ORDER_QUERY_LIMIT) || 10
 interface SearchParams {
     query?: string | string[];
     page?: number;
+    userId?: string;
+    role?: string;
 }
 
 
-const getAllOrders = async (params: SearchParams = {}) => {
-    const { query = '', page = 1 } = params;
+const getOrders = async (params: SearchParams = {}) => {
+    const { query = '', page = 1, userId, role } = params;
 
 
     // Calculate the number of documents to skip
@@ -38,8 +40,10 @@ const getAllOrders = async (params: SearchParams = {}) => {
         if (!searchQuery) {
             await dbConnect();
 
+            const searchCriteria = role === 'admin' || role === 'clerk' ? {} : { asignee: userId };
+
             //retrieve the orders from the database
-            const dbOrders = await Order.find({})
+            const dbOrders = await Order.find(searchCriteria)
                 .select('-_id -__v -createdAt -updatedAt -date_created_gmt -date_modified_gmt')
                 .populate('asignee', ['name', 'image'], User)
                 .limit(LIMIT)
@@ -71,12 +75,13 @@ const getAllOrders = async (params: SearchParams = {}) => {
         } else {
             //call the filtered orders function which will 
             //return the orders based on the search params
-            const filteredOrders = await getFilteredOrders({ query: searchQuery, skip, limit: LIMIT });
+            const filteredOrders = await getFilteredOrders({ query: searchQuery, skip, limit: LIMIT, userId, role });
 
             if (filteredOrders.length > 0) {
                 return filteredOrders
             }
         }
+
         return [];
     } catch (error) {
         console.log('error in getAllOrders: ', error);
@@ -85,4 +90,4 @@ const getAllOrders = async (params: SearchParams = {}) => {
 }
 
 
-export default getAllOrders
+export default getOrders

@@ -9,6 +9,8 @@ interface SearchParams {
     query?: string | string[];
     skip?: number;
     limit?: number;
+    userId?: string;
+    role?: string
 }
 
 /* function which will return the orders based on the search params
@@ -16,13 +18,13 @@ interface SearchParams {
 ** and filters like status, date, etc.
 */
 async function getFilteredOrders(params: SearchParams) {
-    const { query = '', skip = 0, limit = 10 } = params;
+    const { query = '', skip = 0, limit = 10, userId, role } = params;
 
     try {
         await dbConnect();
 
-        // Retrieve the orders from the database
-        const result = await Order.find({
+        const searchCriteria = {
+            ...(role === 'admin' || role === 'clerk' ? {} : { asignee: userId }),
             $or: [
                 { name: { $regex: query, $options: 'i' } },
                 { order_id: { $regex: query, $options: 'i' } },
@@ -30,7 +32,9 @@ async function getFilteredOrders(params: SearchParams) {
                 { city: { $regex: query, $options: 'i' } },
                 { asignee_name: { $regex: query, $options: 'i' } }
             ],
-        })
+        };
+        // Retrieve the orders from the database
+        const result = await Order.find(searchCriteria)
             .select('-_id -__v -createdAt -updatedAt -date_created_gmt -date_modified_gmt')
             .populate('asignee', ['name', 'image'])
             .limit(limit)
