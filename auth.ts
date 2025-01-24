@@ -55,6 +55,7 @@ export const { handlers: { GET, POST }, signIn, signOut, auth } = NextAuth({
                 token.emailVerified = user.emailVerified || null;
                 token.role = user.role;
                 token.image = user.image;
+                token.id = user.id;
             }
             return token
         },
@@ -62,6 +63,7 @@ export const { handlers: { GET, POST }, signIn, signOut, auth } = NextAuth({
             session.user.emailVerified = (token as { emailVerified?: Date | null }).emailVerified || null;
             session.user.role = (token as { role?: string }).role || "user";
             session.user.image = (token as { image?: string }).image || '';
+            session.user.id = (token as { id?: string }).id || '';
             return session
         }
     }
