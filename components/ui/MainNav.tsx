@@ -1,10 +1,10 @@
 import {
     SidebarMenu,
-    SidebarMenuButton,
     SidebarMenuItem
 } from "@/components/shadcn/sidebar"
 import { type LucideIcon } from "lucide-react"
 import Link from "next/link"
+import NavItem from "./NavItem"
 
 interface MainNavProps {
     items: {
@@ -23,12 +23,11 @@ function MainNav({ items }: MainNavProps) {
     return (
         <SidebarMenu>
             {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.title} >
                     <Link href={item.url}>
-                        <SidebarMenuButton tooltip={item.title} >
+                        <NavItem text={item.title}>
                             {item.icon && <item.icon />}
-                            {item.title}
-                        </SidebarMenuButton>
+                        </NavItem>
                     </Link>
                 </SidebarMenuItem>
             ))}
