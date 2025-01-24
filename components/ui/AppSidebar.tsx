@@ -10,9 +10,9 @@ import { HelpCircle, IdCard, LayoutDashboard, Package } from 'lucide-react'
 import MainNav from "./MainNav"
 import User from "./User"
 
-let navItems = [
+const navItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Employees", url: "/employees", icon: IdCard },
+  { title: "Employees", url: "/employees", icon: IdCard, requires: ['admin', 'clerk'] },
   { title: "Orders", url: "/orders", icon: Package },
   { title: "Help", url: "/help", icon: HelpCircle },
 ]
@@ -24,9 +24,10 @@ async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }
   const user = session.user;
 
-  if (user.role === 'driver') {
-    navItems = navItems.filter(item => item.title !== 'Employees')
-  }
+  const filteredNavItems = navItems.filter((item) => {
+    // Include the item if no role is required, or if the user's role matches the required role
+    return !item.requires || item.requires.includes(user.role || 'guest');
+  });
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -34,7 +35,7 @@ async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         Logo
       </SidebarHeader>
       <SidebarContent>
-        <MainNav items={navItems} />
+        <MainNav items={filteredNavItems} />
       </SidebarContent>
       <SidebarFooter>
         {user && <User />}

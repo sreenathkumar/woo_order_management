@@ -6,21 +6,20 @@ import {
 import { type LucideIcon } from "lucide-react"
 import Link from "next/link"
 
-function MainNav
-    ({
-        items,
-    }: {
-        items: {
+interface MainNavProps {
+    items: {
+        title: string
+        url: string
+        icon?: LucideIcon
+        isActive?: boolean
+        items?: {
             title: string
             url: string
-            icon?: LucideIcon
-            isActive?: boolean
-            items?: {
-                title: string
-                url: string
-            }[]
         }[]
-    }) {
+    }[],
+}
+
+function MainNav({ items }: MainNavProps) {
     return (
         <SidebarMenu>
             {items.map((item) => (
