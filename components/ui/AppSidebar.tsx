@@ -10,7 +10,7 @@ import { HelpCircle, IdCard, LayoutDashboard, Package } from 'lucide-react'
 import MainNav from "./MainNav"
 import User from "./User"
 
-const navItems = [
+let navItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Employees", url: "/employees", icon: IdCard },
   { title: "Orders", url: "/orders", icon: Package },
@@ -24,6 +24,9 @@ async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }
   const user = session.user;
 
+  if (user.role === 'driver') {
+    navItems = navItems.filter(item => item.title !== 'Employees')
+  }
 
   return (
     <Sidebar collapsible="icon" {...props}>

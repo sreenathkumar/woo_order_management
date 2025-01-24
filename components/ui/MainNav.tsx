@@ -25,10 +25,12 @@ function MainNav
         <SidebarMenu>
             {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton tooltip={item.title} >
-                        {item.icon && <item.icon />}
-                        <Link href={item.url}>{item.title}</Link>
-                    </SidebarMenuButton>
+                    <Link href={item.url}>
+                        <SidebarMenuButton tooltip={item.title} >
+                            {item.icon && <item.icon />}
+                            {item.title}
+                        </SidebarMenuButton>
+                    </Link>
                 </SidebarMenuItem>
             ))}
         </SidebarMenu>
