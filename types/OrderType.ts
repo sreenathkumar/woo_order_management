@@ -12,6 +12,7 @@ export interface OrderType {
     phone: string,
     amount: string,
     status: string,
+    payment?: string,
     asignee: {
         id?: string,
         name?: string,

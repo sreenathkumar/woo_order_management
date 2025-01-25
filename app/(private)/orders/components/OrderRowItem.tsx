@@ -16,7 +16,6 @@ function OrderRowItem({ order, children }: { order: OrderType, children: React.R
             <TableCell>{order.city}</TableCell>
             <TableAddressCell address={order.address} />
             <TableCell>{order.phone}</TableCell>
-            <TableCell>{order.amount}</TableCell>
             <TableCell>
                 <Badge
                     variant={order.status === 'completed' ? 'success' : 'warning'}
@@ -29,6 +28,8 @@ function OrderRowItem({ order, children }: { order: OrderType, children: React.R
                     {order.status}
                 </Badge>
             </TableCell>
+            <TableCell></TableCell>
+            <TableCell>{order.amount}</TableCell>
             <TableAssigneeCell assignee={order.asignee} />
             <TableCell className="text-right">
                 <div className="flex justify-end gap-4">

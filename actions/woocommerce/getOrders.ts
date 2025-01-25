@@ -58,6 +58,7 @@ const getOrders = async (params: SearchParams = {}) => {
                     city: item.city,
                     address: item.address,
                     phone: item.phone,
+                    payment: item.payment,
                     amount: item.amount,
                     status: item.status,
                     asignee: {
