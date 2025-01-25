@@ -47,7 +47,12 @@ function EditOrderBtn({ order_id }: { order_id: string }) {
     const { setSelectedOrder } = useSelectedOrder()
 
     //close the modal
-    const closeModal = () => setIsOpen(!isOpen);
+    const closeModal = () => {
+        if (isOpen) {
+            setSelectedOrder([]);
+        }
+        setIsOpen(!isOpen)
+    };
 
 
     return <Dialog open={isOpen} onOpenChange={closeModal}>

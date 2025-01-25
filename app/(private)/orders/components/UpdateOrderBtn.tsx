@@ -8,11 +8,16 @@ import { useState } from 'react'
 
 
 function UpdateOrderBtn() {
-    const { selectedOrder } = useSelectedOrder();
+    const { setSelectedOrder, selectedOrder } = useSelectedOrder();
     const [isOpen, setIsOpen] = useState(false);
 
     //close the modal
-    const closeModal = () => setIsOpen(!isOpen);
+    const closeModal = () => {
+        if (isOpen) {
+            setSelectedOrder([]);
+        }
+        setIsOpen(!isOpen)
+    };
     return (
         <Dialog open={isOpen} onOpenChange={closeModal}>
             <DialogTrigger asChild>
