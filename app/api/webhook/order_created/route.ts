@@ -4,12 +4,9 @@
 import { prepareOrder } from "@/actions/woocommerce/wooConfig";
 import { auth } from "@/auth";
 import dbConnect from "@/dbConnect";
+import { notifyListeners } from "@/lib/webhookListener";
 import Order from "@/models/orderModel";
 import { OrderType } from "@/types/OrderType";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const listeners: Set<(data: any) => void> = new Set()
-
 
 export async function POST(request: Request) {
     const session = auth();
@@ -40,7 +37,7 @@ export async function POST(request: Request) {
             await newOrder.save();
 
             //send server side event to the client
-            listeners.forEach(listener => listener(order))
+            notifyListeners(order);
 
             return new Response('Success!', {
                 status: 200,
@@ -57,11 +54,4 @@ export async function POST(request: Request) {
             status: 400,
         })
     }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function addListener(listener: (data: any) => void) {
-    listeners.add(listener);
-
-    return () => listeners.delete(listener)
 }

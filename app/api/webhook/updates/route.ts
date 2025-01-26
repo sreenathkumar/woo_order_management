@@ -1,13 +1,13 @@
-import { addListener } from "../order_created/route";
+import { addListener } from "@/lib/webhookListener"
 
 export async function GET() {
     const encoder = new TextEncoder()
     const stream = new ReadableStream({
-        async start(controller) {
+        start(controller) {
             const listener = (data: unknown) => {
                 controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
             }
-            const cleanup = await addListener(listener)
+            const cleanup = addListener(listener)
 
             return () => cleanup()
         }
