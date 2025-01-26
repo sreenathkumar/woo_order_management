@@ -1,21 +1,16 @@
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/shadcn/dropdown-menu"
 import { ListFilter } from "lucide-react"
-import { Button } from "@/components/shadcn/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/shadcn/dropdown-menu"
 
 function FilterBtn() {
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger className="flex items-center gap-2 border h-9 px-3 rounded-md">
                 <ListFilter className="h-4 w-4" />
                 Filters
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Billing</DropdownMenuItem>
-                <DropdownMenuItem>Team</DropdownMenuItem>
-                <DropdownMenuItem>Subscription</DropdownMenuItem>
+            <DropdownMenuContent>
+                <DropdownMenuItem>City (Asc) </DropdownMenuItem>
+                <DropdownMenuItem>City (Desc)</DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     )
