@@ -60,7 +60,7 @@ export async function POST(request: Request) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function addListener(listener: (data: any) => void) {
+export async function addListener(listener: (data: any) => void) {
     listeners.add(listener);
 
     return () => listeners.delete(listener)

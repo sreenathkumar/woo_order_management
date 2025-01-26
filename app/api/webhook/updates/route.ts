@@ -3,11 +3,11 @@ import { addListener } from "../order_created/route";
 export async function GET() {
     const encoder = new TextEncoder()
     const stream = new ReadableStream({
-        start(controller) {
+        async start(controller) {
             const listener = (data: unknown) => {
                 controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
             }
-            const cleanup = addListener(listener)
+            const cleanup = await addListener(listener)
 
             return () => cleanup()
         }
