@@ -33,7 +33,11 @@ export async function sendVerificationEmail(email: string, name: string, link: s
     });
 
     return true;
-  } catch (error) {
+
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.log('error in sendVerificationEmail: ', error.message);
     return false;
   }
 }
@@ -92,7 +96,9 @@ export async function sendOTPMail(email: string, otp: string) {
     });
 
     return true;
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.log('error in sendOTPMail: ', error.message);
     return false;
   }
 }

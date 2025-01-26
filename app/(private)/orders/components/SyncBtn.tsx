@@ -2,14 +2,12 @@
 
 import testSync from "@/actions/woocommerce/testSync";
 //import syncWithWoo from "@/actions/woocommerce/syncWithWoo"
-import { Button } from "@/components/shadcn/button"
-import { CloudDownload } from "lucide-react"
+import { Button } from "@/components/shadcn/button";
+import { CloudDownload } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import toast from "react-hot-toast";
 
 function SyncBtn() {
-    const [status, setStatus] = useState('');
     const router = useRouter();
 
     const handleClick = async () => {
@@ -22,7 +20,6 @@ function SyncBtn() {
             toast.success(res.message, { id: toastId });
         }
 
-        setStatus(res.status);
         router.refresh();
     }
     return (

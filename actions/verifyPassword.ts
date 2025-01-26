@@ -27,7 +27,10 @@ async function verifyUser({ email, password }: { email: string, password: string
         } else {
             return null;
         }
-    } catch (error: unknown) {
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        console.log('error in verifying user: ', error?.message);
         return null;
     }
 };

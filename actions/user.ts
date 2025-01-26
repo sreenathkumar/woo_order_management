@@ -1,6 +1,5 @@
 'use server'
 
-import { auth, unstable_update } from "@/auth";
 import dbConnect from "@/dbConnect";
 import User from "@/models/userModel";
 import { UserProfileType } from "@/types/UserType";
@@ -11,7 +10,7 @@ const utapi = new UTApi({});
 async function getUser({ userId }: { userId: string }) {
     //check if userId exist
     if (!userId) {
-        null
+        return null
     }
 
     try {
@@ -22,7 +21,7 @@ async function getUser({ userId }: { userId: string }) {
         const user = await User.findOne({ email: userId }).select(['name', 'email', 'image', 'address', 'phone']);
 
         if (!user) {
-            null
+            return null
         }
 
         return {
@@ -37,7 +36,7 @@ async function getUser({ userId }: { userId: string }) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         console.log('error in getting user: ', error?.message);
-        null
+        return null
     }
 }
 
@@ -131,10 +130,6 @@ async function updateProfilePhoto(formdata: FormData) {
         }
 
     }
-
-    //update the db user
-
-    //return the response
 }
 
-export { getUser, updateProfile, updateProfilePhoto }
+export { getUser, updateProfile, updateProfilePhoto };

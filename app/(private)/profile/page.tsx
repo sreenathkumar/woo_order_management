@@ -4,6 +4,7 @@ import { Card } from '@/components/shadcn/card';
 import { redirect } from 'next/navigation';
 import ProfileInformation from './components/profile-info';
 import UserImage from './components/user-image';
+import { UserProfileType } from '@/types/UserType';
 
 async function ProfilePage() {
     const session = await auth();
@@ -11,7 +12,7 @@ async function ProfilePage() {
 
     const { email, name } = session?.user;
 
-    const user = await getUser({ userId: email });
+    const user = await getUser({ userId: email }) as UserProfileType;
 
     return (
         <Card className='flex gap-4 p-8 mt-8 mb-4 bg-transparent h-full overflow-y-auto'>
