@@ -2,7 +2,7 @@ import { OrderType } from "@/types/OrderType";
 import WooCommerceRestApi from "@woocommerce/woocommerce-rest-api";
 
 export const wooApi = new WooCommerceRestApi({
-    url: "https://wordpress-1326654-4875508.cloudwaysapps.com/",
+    url: process.env.WOO_API_URI || "",
     consumerKey: process.env.WOO_KEY || "",
     consumerSecret: process.env.WOO_SECRET || "",
     version: "wc/v3"
