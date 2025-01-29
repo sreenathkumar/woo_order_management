@@ -1,23 +1,46 @@
-import { addListener } from "@/lib/webhookListener"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { NextResponse } from "next/server";
+
+const clients: Set<ReadableStreamDefaultController> = new Set()
 
 export async function GET() {
-    const encoder = new TextEncoder()
     const stream = new ReadableStream({
         start(controller) {
-            const listener = (data: unknown) => {
-                controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
-            }
-            const cleanup = addListener(listener)
+            clients.add(controller)
 
-            return () => cleanup()
+            // Cleanup when the stream is canceled (client disconnects)
+            return () => {
+                clients.delete(controller);
+            };
+        },
+
+        cancel() {
+            // Cleanup when the stream is canceled (client disconnects)
+            clients.forEach(client => clients.delete(client));
         }
     })
 
-    return new Response(stream, {
+    return new NextResponse(stream, {
         headers: {
-            'Content-Type': 'text/event-stream',
-            'Cache-Control': 'no-cache',
-            'Connection': 'keep-alive',
+            "Content-Type": "text/event-stream",
+            "Cache-Control": "no-cache",
+            Connection: "keep-alive",
         },
     })
 }
+
+export async function POST(request: Request) {
+    const data = await request.json();
+
+    clients.forEach((client) => {
+        try {
+            client.enqueue(`data: ${JSON.stringify(data)}\n\n`);
+        } catch (error) {
+            console.warn("Skipping closed SSE client:", error);
+            clients.delete(client);
+        }
+    })
+
+    return NextResponse.json({ success: true })
+}
+

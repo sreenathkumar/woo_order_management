@@ -1,32 +1,39 @@
 'use client'
 
+import { Button } from "@/components/shadcn/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
 import { TableBody, TableCell, TableRow } from "@/components/shadcn/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/shadcn/dialog'
+import { useSelectedOrder } from "@/context/SelectedOrderCtx";
 import { OrderType } from "@/types/OrderType";
 import { useEffect, useState } from "react";
 import OrderRowItem from "./OrderRowItem";
-import { Button } from "@/components/shadcn/button";
-import { useSelectedOrder } from "@/context/SelectedOrderCtx";
 import UpdateOrders from "./UpdateOrders";
+import { useRouter } from "next/navigation";
 
 function TableContent({ orders, columns }: { orders: OrderType[], columns: number }) {
     const [initailOrders, setInitailOrders] = useState<OrderType[]>(orders);
+    const router = useRouter()
 
     //update UI when the orders prop changes
     useEffect(() => {
         setInitailOrders(orders);
     }, [orders]);
 
-    //listen the updates from the woocommerce webhook
     useEffect(() => {
-        const eventSource = new EventSource('/api/webhook/updates');
+        const eventSource = new EventSource("/api/webhook/updates")
+
         eventSource.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            console.log('data: ', data);
+            const data = JSON.parse(event.data)
+            if (data.type === "NEW_ORDER") {
+                setInitailOrders(prev => [data.order, ...prev]);
+                router.refresh();
+            }
         }
 
-        return () => eventSource.close();
-    }, []);
+        return () => {
+            eventSource.close()
+        }
+    }, [router])
 
     return (
         <TableBody>

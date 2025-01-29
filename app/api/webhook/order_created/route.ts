@@ -2,21 +2,12 @@
 // also revalidate the path to show the updated data
 
 import { prepareOrder } from "@/actions/woocommerce/wooConfig";
-import { auth } from "@/auth";
 import dbConnect from "@/dbConnect";
-import { notifyListeners } from "@/lib/webhookListener";
 import Order from "@/models/orderModel";
 import { OrderType } from "@/types/OrderType";
 
+
 export async function POST(request: Request) {
-    const session = auth();
-
-    if (!session) {
-        return new Response('Unauthorized', {
-            status: 401,
-        })
-    }
-
     try {
         const res = await request.json();
 
@@ -36,8 +27,12 @@ export async function POST(request: Request) {
             const newOrder = new Order(order);
             await newOrder.save();
 
-            //send server side event to the client
-            notifyListeners(order);
+            // Notify clients about the new order
+            await fetch("http://localhost:3000/api/webhook/updates", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ type: "NEW_ORDER", order }),
+            })
 
             return new Response('Success!', {
                 status: 200,
