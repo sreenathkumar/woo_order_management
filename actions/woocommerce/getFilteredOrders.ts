@@ -39,6 +39,7 @@ async function getFilteredOrders(params: SearchParams) {
             .populate('asignee', ['name', 'image'])
             .limit(limit)
             .skip(skip)
+            .sort({ date_created_gmt: -1 })
             .lean()
 
         //Convert the result to OrderType for the server action response

@@ -47,6 +47,7 @@ const getOrders = async (params: SearchParams = {}) => {
                 .select('-_id -__v -createdAt -updatedAt -date_created_gmt -date_modified_gmt')
                 .populate('asignee', ['name', 'image'], User)
                 .limit(LIMIT)
+                .sort({ date_created_gmt: -1 })
                 .skip(skip)
                 .lean();
 
