@@ -11,7 +11,7 @@ type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 
 
 async function OrdersPage({ searchParams }: { searchParams: SearchParams }) {
-    const { query } = decodeSearchParams(await searchParams);
+    const { query, sort } = decodeSearchParams(await searchParams);
 
     return (
         <div className="py-8 flex flex-col flex-1 overflow-auto">
@@ -27,7 +27,7 @@ async function OrdersPage({ searchParams }: { searchParams: SearchParams }) {
                     </div>
                 </div>
                 <Suspense fallback={<div>Loading table data...</div>}>
-                    <OrdersTable query={query} />
+                    <OrdersTable query={query} sort={sort} />
                 </Suspense>
             </SelectedOrderProvider>
         </div>

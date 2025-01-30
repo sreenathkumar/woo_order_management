@@ -4,6 +4,7 @@ import dbConnect from "@/dbConnect";
 import Order from "@/models/orderModel";
 import getFilteredOrders from "./getFilteredOrders";
 import User from "@/models/userModel";
+import { SortOrder } from "mongoose";
 
 
 //limit the number of orders for the db query result
@@ -14,17 +15,19 @@ interface SearchParams {
     page?: number;
     userId?: string;
     role?: string;
+    sort?: string | string[]
 }
 
 
 const getOrders = async (params: SearchParams = {}) => {
-    const { query = '', page = 1, userId, role } = params;
+    const { query = '', page = 1, userId, role, sort = '' } = params;
 
 
     // Calculate the number of documents to skip
     const skip = (page - 1) * LIMIT;
 
     let searchQuery: string = '';
+    let sorting: string = '';
 
     if (Array.isArray(query)) {
         searchQuery = query.join(' ');
@@ -32,22 +35,32 @@ const getOrders = async (params: SearchParams = {}) => {
         searchQuery = query
     }
 
+    if (Array.isArray(sort)) {
+        sorting = sort.join(' ');
+    } else {
+        sorting = sort
+    }
+
     try {
         /* If there are no orders in the database, fetch them from the API
         ** then insert them into the database
-        ** and return them as server action response
+        ** and return them as server action response 
         */
         if (!searchQuery) {
             await dbConnect();
 
             const searchCriteria = role === 'admin' || role === 'clerk' ? {} : { asignee: userId };
+            const sortCriteria: Record<string, SortOrder> =
+                sorting === "city_asc" ? { city: 1 } :
+                    sorting === "city_desc" ? { city: -1 } :
+                        { date_created_gmt: -1 };
 
             //retrieve the orders from the database
             const dbOrders = await Order.find(searchCriteria)
                 .select('-_id -__v -createdAt -updatedAt -date_created_gmt -date_modified_gmt')
                 .populate('asignee', ['name', 'image'], User)
                 .limit(LIMIT)
-                .sort({ date_created_gmt: -1 })
+                .sort(sortCriteria)
                 .skip(skip)
                 .lean();
 

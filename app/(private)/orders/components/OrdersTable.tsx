@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 
 const tableColumns = ['Order Number', 'Name', 'City', 'Address', 'Phone Number', 'Payment', 'Amount', 'Status', 'Asignee', 'Actions'];
 
-async function OrdersTable({ query }: { query: string | string[] | undefined }) {
+async function OrdersTable({ query, sort }: { query: string | string[] | undefined, sort: string | string[] | undefined }) {
     const session = await auth();
     if (!session) {
         redirect('/login');
@@ -19,7 +19,7 @@ async function OrdersTable({ query }: { query: string | string[] | undefined }) 
     const userId = session?.user?.id
     const role = session?.user?.role
 
-    const orders: OrderType[] = await getOrders({ query, userId, role });
+    const orders: OrderType[] = await getOrders({ query, userId, role, sort });
 
     return (
         <div className="border rounded-lg w-full overflow-x-auto">
