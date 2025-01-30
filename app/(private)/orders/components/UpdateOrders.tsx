@@ -3,12 +3,13 @@
 import { getAllDrivers } from "@/actions/employee"
 import { Button } from "@/components/shadcn/button"
 import { useSelectedOrder } from "@/context/SelectedOrderCtx"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import OrderBadge from "./OrderBadge"
 import { AssigneeUpdateOptions, StatusUpdateOptions } from "./UpdateOptions"
 import updateOrders from "@/actions/woocommerce/updateOrders"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
+import { getSingleOrder } from "@/actions/woocommerce/getOrders"
 
 //type for drivers object
 export interface DriversType {
@@ -25,10 +26,24 @@ interface UpdateOrderType {
     status?: string
 }
 
-const statuses = ['Processing', 'Delivered', 'Cash Paid', 'Link Paid', 'Unpaid'];
+//type for single order data
+interface SingleOrderType {
+    order_id: string,
+    payment: string,
+    status: string,
+    asignee: {
+        id: string,
+        name: string,
+        image?: string
+    }
+}
 
-function UpdateOrders({ closeModal }: { closeModal: () => void }) {
+const statuses = ['Processing', 'Delivered', 'Cash Paid', 'Link Paid', 'Unpaid'];
+const prepaidOrderStatuses = ['Processing', 'Delivered'];
+
+function UpdateOrders({ closeModal, order_id }: { closeModal: () => void, order_id?: string }) {
     const { selectedOrder, setSelectedOrder } = useSelectedOrder();
+    const [singleOrder, setSingleOrder] = useState<SingleOrderType | null>(null);
     const [drivers, setDrivers] = useState<DriversType[]>([]);
     const router = useRouter();
 
@@ -87,10 +102,26 @@ function UpdateOrders({ closeModal }: { closeModal: () => void }) {
         }
     }
 
+    //fetch the single order data
+    const fetchSingleOrder = useCallback(async () => {
+        const res = await getSingleOrder(order_id!);
+
+        if (res) {
+            setSingleOrder(res);
+        }
+
+    }, [order_id])
+
     //update drivers on page load
     useEffect(() => {
         fetchDrivers();
-    }, [])
+    }, []);
+
+    //update single order on page load
+    useEffect(() => {
+        fetchSingleOrder();
+    }, [fetchSingleOrder]);
+
 
     return (
         <div className="flex flex-col gap-6">
@@ -103,7 +134,7 @@ function UpdateOrders({ closeModal }: { closeModal: () => void }) {
             </div>
             <form className="space-y-6" onSubmit={handleUpdateStatus}>
                 <AssigneeUpdateOptions options={drivers} label="Assignee" id="assignee" placeholder="Select an assignee" />
-                <StatusUpdateOptions options={statuses} label="Status" id="status" placeholder="Select a status" />
+                <StatusUpdateOptions options={singleOrder?.payment === 'hesabe' ? prepaidOrderStatuses : statuses} label="Status" id="status" placeholder="Select a status" />
 
                 <Button type="submit">Update Orders</Button>
             </form>

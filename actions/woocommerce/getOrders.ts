@@ -91,5 +91,32 @@ const getOrders = async (params: SearchParams = {}) => {
     }
 }
 
+//return a single order data
+export const getSingleOrder = async (order_id: string) => {
+    if (!order_id) {
+        return null;
+    }
+    try {
+        await dbConnect();
+        const order = await Order.findOne({ order_id })
+            .select(['order_id', 'payment', 'status', 'asignee'])
+            .populate('asignee', ['name', 'image'], User)
+
+        return {
+            order_id: order?.order_id,
+            payment: order?.payment,
+            status: order?.status,
+            asignee: {
+                id: order?.asignee?._id?.toString() || '',
+                name: order?.asignee?.name,
+                image: order?.asignee?.image
+            }
+        };
+    } catch (error) {
+        console.log('error in getSingleOrder: ', error);
+        return null;
+    }
+}
+
 
 export default getOrders

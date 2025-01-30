@@ -1,7 +1,7 @@
 'use client'
 
-import testSync from "@/actions/woocommerce/testSync";
-//import syncWithWoo from "@/actions/woocommerce/syncWithWoo"
+//import testSync from "@/actions/woocommerce/testSync";
+import syncWithWoo from "@/actions/woocommerce/syncWithWoo"
 import { Button } from "@/components/shadcn/button";
 import { CloudDownload } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -12,9 +12,9 @@ function SyncBtn() {
 
     const handleClick = async () => {
         const toastId = toast.loading('Syncing orders...');
-        //const res = await syncWithWoo();
+        const res = await syncWithWoo();
 
-        const res = await testSync();
+        //const res = await testSync();
 
         if (res) {
             toast.success(res.message, { id: toastId });

@@ -7,7 +7,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
 
-const tableColumns = ['Order Number', 'Name', 'City', 'Address', 'Phone Number', 'Status', 'Payment', 'Amount', 'Asignee', 'Actions'];
+const tableColumns = ['Order Number', 'Name', 'City', 'Address', 'Phone Number', 'Payment', 'Amount', 'Status', 'Asignee', 'Actions'];
 
 async function OrdersTable({ query }: { query: string | string[] | undefined }) {
     const session = await auth();

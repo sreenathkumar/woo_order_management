@@ -9,7 +9,6 @@ const orderSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-
     city: {
         type: String,
         required: true
@@ -40,7 +39,7 @@ const orderSchema = new mongoose.Schema({
     status: {
         type: String,
         required: true,
-        default: "pending"
+        default: "Processing"
     },
     asignee_name: {
         type: String,
