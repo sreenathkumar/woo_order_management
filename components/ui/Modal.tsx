@@ -1,5 +1,6 @@
-import type React from "react"
-import { useEffect, useRef } from "react"
+'use client'
+
+import { useEffect, useRef, useState } from "react"
 import { X } from "lucide-react"
 import { createPortal } from "react-dom"
 
@@ -12,9 +13,14 @@ interface ModalProps {
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
     const modalRef = useRef<HTMLDivElement>(null);
+    const [modalRoot, setModalRoot] = useState<HTMLElement | null>(null);
 
-    const modalRoot = document.getElementById("modal-root");
+    // Ensure `modalRoot` is set only on the client
+    useEffect(() => {
+        setModalRoot(document.getElementById("modal-root"));
+    }, []);
 
+    // Close the modal when the escape key is pressed
     useEffect(() => {
         const handleEscape = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
@@ -33,6 +39,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
         }
     }, [isOpen, onClose])
 
+    // Focus the modal when it opens
     useEffect(() => {
         if (isOpen) {
             modalRef.current?.focus()
