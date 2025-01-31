@@ -25,6 +25,7 @@ async function DashboardLayout({ children }: { children: React.ReactNode }) {
                         </div>
                     </header>
                     {children}
+                    <div id='modal-root'></div>
                     <Toaster />
                 </SidebarInset>
             </SidebarProvider>
