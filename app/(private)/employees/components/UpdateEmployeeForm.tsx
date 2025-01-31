@@ -78,7 +78,7 @@ function UpdateEmployeeForm({ data }: { data: { id: string, name: string, email:
                     </Select>
                 </div>
 
-                <SubmitBtn text="Add Employee" loadingText="Adding Employee..." />
+                <SubmitBtn text="Update Employee" loadingText="Updating Employee..." />
 
             </form>
         </>
