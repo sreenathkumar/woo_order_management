@@ -6,6 +6,7 @@ import UpdateOrderBtn from "./components/UpdateOrderBtn"
 import OrdersTable from "./components/OrdersTable"
 import SyncBtn from "./components/SyncBtn"
 import FilterBtn from "./components/FilterBtn"
+import CopyBtn from "./components/CopyBtn"
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 
@@ -22,6 +23,7 @@ async function OrdersPage({ searchParams }: { searchParams: SearchParams }) {
                         <SyncBtn />
                     </div>
                     <div className="flex gap-2 items-center">
+                        <CopyBtn />
                         <FilterBtn />
                         <UpdateOrderBtn />
                     </div>
