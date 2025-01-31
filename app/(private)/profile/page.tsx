@@ -10,9 +10,9 @@ async function ProfilePage() {
     const session = await auth();
     if (!session) redirect('/login');
 
-    const { email, name } = session?.user;
+    const { email, name, id } = session?.user;
 
-    const user = await getUser({ userId: email }) as UserProfileType;
+    const user = await getUser({ userId: id }) as UserProfileType;
 
     return (
         <Card className='flex gap-4 p-8 mt-8 mb-4 bg-transparent h-full overflow-y-auto'>

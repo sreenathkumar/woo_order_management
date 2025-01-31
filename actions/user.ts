@@ -18,7 +18,7 @@ async function getUser({ userId }: { userId: string }) {
         await dbConnect();
 
         //query the database for the user with the given userId
-        const user = await User.findOne({ email: userId }).select(['name', 'email', 'image', 'address', 'phone']);
+        const user = await User.findOne({ _id: userId }).select(['name', 'email', 'image', 'address', 'phone']);
 
         if (!user) {
             return null
