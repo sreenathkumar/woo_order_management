@@ -7,6 +7,7 @@ import UpdateEmployee from "./UpdateEmployee"
 import DeleteEmployee from "./DeleteEmployee"
 import { Button } from "@/components/shadcn/button"
 import { Trash } from "lucide-react"
+import Link from "next/link"
 
 
 type Props = {
@@ -62,7 +63,9 @@ export default function EmployeeTable({ employees, selectedItems, setSelectedIte
                                     }}
                                 />
                             </TableCell>
-                            <TableCell>{employee.name}</TableCell>
+                            <TableCell>
+                                <Link className="hover:underline" href={`/employees/${employee.id}`}>{employee.name}</Link>
+                            </TableCell>
                             <TableCell>{employee.email}</TableCell>
                             <TableCell>
                                 <Badge
