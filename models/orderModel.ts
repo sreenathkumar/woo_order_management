@@ -39,7 +39,7 @@ const orderSchema = new mongoose.Schema({
     status: {
         type: String,
         required: true,
-        default: "Processing"
+        default: "processing"
     },
     asignee_name: {
         type: String,
@@ -50,6 +50,7 @@ const orderSchema = new mongoose.Schema({
         ref: "User",
         default: null
     },
+    date_delivered: { type: Date, default: null },
     date_created_gmt: { type: Date, required: true },
     date_modified_gmt: { type: Date, required: true },
 }, { timestamps: true })

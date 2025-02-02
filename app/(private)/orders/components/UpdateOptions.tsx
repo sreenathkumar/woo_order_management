@@ -21,7 +21,7 @@ function StatusUpdateOptions({ options, label, id, placeholder }: { options?: st
                 </SelectTrigger>
                 <SelectContent>
                     {options?.map((name) => (
-                        <SelectItem key={name} value={name}>
+                        <SelectItem key={name} value={name.toLowerCase().replace(/\s/g, '_')}>
                             {name}
                         </SelectItem>
                     ))}

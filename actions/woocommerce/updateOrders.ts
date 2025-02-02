@@ -21,14 +21,17 @@ async function updateOrders({ assignee, assignee_name, status, order_ids }: Upda
         //connect to the database
         await dbConnect();
 
+        const updatedData = {
+            asignee: assignee === 'none' ? null : assignee,
+            asignee_name: assignee === 'none' ? '' : assignee_name,
+            status: status,
+            ...(status && ['delivered', 'link_paid', 'cash_paid'].includes(status) && { delivery_date: Date.now() })
+        }
+
         //update the orders
         const orders = await Order.updateMany({
             order_id: { $in: order_ids }
-        }, {
-            asignee: assignee === 'none' ? null : assignee,
-            asignee_name: assignee === 'none' ? '' : assignee_name,
-            status: status
-        });
+        }, updatedData);
 
         //return the response
         if (orders.modifiedCount && orders.modifiedCount > 0) {

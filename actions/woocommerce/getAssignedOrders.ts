@@ -13,7 +13,7 @@ const getAssignedOrders = unstable_cache(async ({ id, status }: { id: string, st
     try {
         dbConnect();
 
-        const filter = { asignee: id, ...(status ? { status: (status !== 'processing' ? { $ne: 'Processing' } : 'Processing') } : {}) };
+        const filter = { asignee: id, ...(status ? { status: (status !== 'processing' ? { $ne: 'processing' } : 'processing') } : {}) };
 
         const orders = await Order.find(filter).select(['order_id', 'name', 'city', 'address', 'phone', 'payment', 'amount', 'status']);
 
