@@ -1,29 +1,23 @@
+"use client"
+
 
 import {
     Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
+    CardContent
 } from "@/components/shadcn/card"
+import ChartHeader from "./ChartHeader"
 
 
-export default function AnalyticsCard() {
-
+export function AnalyticsCard({ children, title = "Analytics", chartKey }: { children: React.ReactNode, title: string, chartKey: string }) {
 
     return (
-        <Card className="flex flex-col items-center gap-10">
-            <CardHeader className="items-center pb-0">
-                <CardTitle className="text-xl">Total Orders</CardTitle>
-                <CardDescription>January - June 2024</CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-1 items-center pb-0 text-4xl font-bold">
-                1000+
+        <Card className="w-full bg-transparent" >
+            <ChartHeader title={title} chartKey={chartKey} />
+            <CardContent >
+                {children}
             </CardContent>
-            <CardFooter className="flex-col gap-2 text-sm leading-none text-muted-foreground">
-                Showing total orders for the last 6 months
-            </CardFooter>
         </Card>
     )
 }
+
+export default AnalyticsCard
