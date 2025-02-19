@@ -25,7 +25,7 @@ async function updateOrders({ assignee, assignee_name, status, order_ids }: Upda
             asignee: assignee === 'none' ? null : assignee,
             asignee_name: assignee === 'none' ? '' : assignee_name,
             status: status,
-            ...(status && ['delivered', 'link_paid', 'cash_paid'].includes(status) && { delivery_date: Date.now() })
+            ...(status && (['delivered', 'link_paid', 'cash_paid'].includes(status) ? { date_delivered: Date.now() } : { date_delivered: null }))
         }
 
         //update the orders
