@@ -77,6 +77,7 @@ function ChartHeader({ className, chartKey, title }: DateRangePickerProps) {
       const { rangeText } = getDateRange(from, to);
       setRangeText(rangeText);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

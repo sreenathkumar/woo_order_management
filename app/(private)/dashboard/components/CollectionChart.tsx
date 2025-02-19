@@ -15,7 +15,7 @@ const chartConfig = {
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function LinkPaidChart({ chartData }: { chartData: any[] }) {
+function CollectionChart({ chartData }: { chartData: any[] }) {
     const totalAmount = useMemo(() => {
         return chartData.reduce((acc, curr) => acc + curr.total_amount, 0)
     }, [chartData]);
@@ -72,4 +72,4 @@ function LinkPaidChart({ chartData }: { chartData: any[] }) {
     )
 }
 
-export default LinkPaidChart
+export default CollectionChart
