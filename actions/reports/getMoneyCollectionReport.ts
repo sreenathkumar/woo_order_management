@@ -5,7 +5,7 @@ import Order from "@/models/orderModel";
 
 
 interface ReportTypeArgument {
-    from?: Date | undefined, to?: Date | undefined, paymentType: string
+    from?: string | undefined, to?: string | undefined, paymentType: 'link_paid' | 'cash_paid'
 }
 
 type ReportReturnType = Promise<{
@@ -14,8 +14,10 @@ type ReportReturnType = Promise<{
 }[]>
 
 
-async function getReportByPaymentType({ paymentType }: ReportTypeArgument): ReportReturnType {
-    if (!paymentType) return [];
+async function getReportByPaymentType({ from, to, paymentType }: ReportTypeArgument): ReportReturnType {
+    if (!paymentType) return []; // link_paid or cash_paid
+
+    if (!from && !to) return []; //no start and end date
 
     try {
         //connect database
@@ -26,7 +28,7 @@ async function getReportByPaymentType({ paymentType }: ReportTypeArgument): Repo
             {
                 $match: {
                     status: paymentType,
-                    date_delivered: { $gte: new Date("2025-01-13T06:03:34.000+00:00") }
+                    date_delivered: { $gte: from && new Date(from), $lte: to && new Date(to) }
                 }
             },
             {

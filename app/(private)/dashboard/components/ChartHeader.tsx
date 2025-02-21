@@ -18,7 +18,9 @@ import { CalendarIcon } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { DateRange } from "react-day-picker"
-import { getDateRange } from "@/lib/formatDate"
+import { getDateRangeText } from "@/lib/formatDate"
+
+const DATE_INTERVAL = process.env.DEFAULT_DATE_INTERVAL || 14
 
 type DateRangePickerProps = { className?: React.HTMLAttributes<HTMLDivElement>, title: string, chartKey: string }
 
@@ -28,7 +30,7 @@ function ChartHeader({ className, chartKey, title }: DateRangePickerProps) {
   const [rangeText, setRangeText] = useState<string>("last 15 days");
 
   const [date, setDate] = useState<DateRange | undefined>({
-    from: subDays(new Date(), 15),
+    from: subDays(new Date(), Number(DATE_INTERVAL)),
     to: new Date(),
   });
 
@@ -51,12 +53,33 @@ function ChartHeader({ className, chartKey, title }: DateRangePickerProps) {
     }
 
     // Set the range text
-    if (date?.from && date?.to) {
-      const { rangeText } = getDateRange(date.from.toISOString(), date.to.toISOString());
+    if (date?.from || date?.to) {
+      const { rangeText } = getDateRangeText(date?.from, date?.to);
 
       setRangeText(rangeText);
+    } else {
+      setRangeText('')
     }
 
+    // Update URL without adding to browser history
+    router.replace(`?${params.toString()}`);
+  }
+
+  //Reset the selected date range
+  const resetDateChange = () => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    // Clear existing parameters
+    params.delete(`${chartKey}_from`);
+    params.delete(`${chartKey}_to`);
+
+    // set as initial range
+    setDate(
+      {
+        from: subDays(new Date(), Number(DATE_INTERVAL)),
+        to: new Date(),
+      }
+    )
     // Update URL without adding to browser history
     router.replace(`?${params.toString()}`);
   }
@@ -66,17 +89,33 @@ function ChartHeader({ className, chartKey, title }: DateRangePickerProps) {
     const from = searchParams.get(`${chartKey}_from`);
     const to = searchParams.get(`${chartKey}_to`);
 
-    if (from || to) {
-      setDate((prevDate) => ({
-        ...prevDate,
-        from: from ? new Date(parseISO(from)) : prevDate?.from,
-        to: to ? new Date(parseISO(to)) : prevDate?.to,
+    //if start date exists but end date not exists
+    if (from && !to) {
+      setDate(() => ({
+        from: new Date(parseISO(from)),
+        to: new Date(parseISO(from))
       }));
-
-      //get the range text
-      const { rangeText } = getDateRange(from, to);
-      setRangeText(rangeText);
     }
+
+    //if end date exists but start date not exists
+    if (to && !from) {
+      setDate(() => ({
+        from: subDays(to, Number(DATE_INTERVAL)),
+        to: new Date(parseISO(to)),
+      }));
+    }
+
+    //if both start date and end date exists
+    if (from && to) {
+      setDate(() => ({
+        from: new Date(parseISO(from)),
+        to: new Date(parseISO(to))
+      }));
+    }
+
+    //get the range text
+    const { rangeText } = getDateRangeText(date?.from, date?.to);
+    setRangeText(rangeText);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -84,7 +123,7 @@ function ChartHeader({ className, chartKey, title }: DateRangePickerProps) {
     <CardHeader className="flex flex-row items-center justify-between mb-10">
       <div>
         <CardTitle>{title}</CardTitle>
-        <CardDescription>Showing the report for {rangeText}</CardDescription>
+        {rangeText && <CardDescription>Showing the report for {rangeText}</CardDescription>}
       </div>
 
       <div className={cn("grid gap-2", className)}>
@@ -122,8 +161,9 @@ function ChartHeader({ className, chartKey, title }: DateRangePickerProps) {
               onSelect={setDate}
               numberOfMonths={2}
             />
-            <div className="p-3">
-              <Button className="w-full" onClick={handleDateChange}>Apply</Button>
+            <div className="p-3 flex gap-4 justify-between">
+              <Button onClick={handleDateChange}>Apply</Button>
+              <Button className="bg-red-500" onClick={resetDateChange}>Reset</Button>
             </div>
 
           </PopoverContent>

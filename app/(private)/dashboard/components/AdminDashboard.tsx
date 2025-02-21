@@ -1,42 +1,38 @@
-import OrdersChart from "./OrdersChart"
-import AnalyticsCard from "./AnalyticsCard"
-import LinkPaidChart from "./LinkPaidChart"
-import { getReportByPaymentType } from "@/actions/reports/getMoneyCollectionReport"
+import { Suspense } from "react"
+import AllOrdersReport from "./AllOrdersReport"
+import CashPaidReport from "./CashPaidReport"
+import LinkPaidReport from "./LinkPaidReport"
 
-const chartData = [
-    { month: "January", orders: 186 },
-    { month: "February", orders: 305 },
-    { month: "March", orders: 237 },
-    { month: "April", orders: 73 },
-    { month: "May", orders: 209 },
-    { month: "June", orders: 214 },
-    { month: "July", orders: 73 },
-    { month: "August", orders: 200 },
-    { month: "September", orders: 204 },
-    { month: "October", orders: 703 },
-    { month: "November", orders: 9 },
-    { month: "December", orders: 14 },
-]
+interface AdminDashboardProps {
+    searchParams: { [key: string]: string | string[] | undefined }
+}
 
-
-async function AdminDashboard() {
-    const reports = await getReportByPaymentType({ paymentType: 'link_paid' });
+async function AdminDashboard({ searchParams }: AdminDashboardProps) {
+    const { delivery_from, delivery_to, link_paid_from, link_paid_to, cash_paid_from, cash_paid_to, } = searchParams;
 
     return (
         <div className="flex flex-1 flex-col gap-4 py-8">
-            <AnalyticsCard title="Total Orders" chartKey="delivery">
-                <OrdersChart chartData={chartData} />
-            </AnalyticsCard>
+            <Suspense fallback={<span>Loading delivered orders data</span>}>
+                <AllOrdersReport from={stringFromArray(delivery_from)} to={stringFromArray(delivery_to)} />
+            </Suspense>
             <div className="grid grid-cols-2 gap-4">
-                <AnalyticsCard title="Link Paid" chartKey="link_paid">
-                    <LinkPaidChart chartData={reports} />
-                </AnalyticsCard>
-                <AnalyticsCard title="Cash Paid" chartKey="cash_paid">
-                    <OrdersChart chartData={chartData} />
-                </AnalyticsCard>
+                <Suspense fallback={<span>Loading Link Paid reports</span>}>
+                    <LinkPaidReport from={stringFromArray(link_paid_from)} to={stringFromArray(link_paid_to)} />
+                </Suspense>
+                <Suspense fallback={<span>Loading Cash Paid reports</span>}>
+                    <CashPaidReport from={stringFromArray(cash_paid_from)} to={stringFromArray(cash_paid_to)} />
+                </Suspense>
             </div>
         </div>
     )
+}
+
+function stringFromArray(target: string | string[] | undefined) {
+    if (target && Array.isArray(target)) {
+        return target.join('_')
+    }
+
+    return target
 }
 
 export default AdminDashboard

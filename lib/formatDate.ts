@@ -1,47 +1,37 @@
 import {
-    subDays, subMonths, subYears, isValid, parseISO,
     differenceInDays, differenceInMonths, differenceInYears,
-    isSameDay, format
+    format,
+    isSameDay,
+    subDays
 } from "date-fns";
 
-type Period = "30d" | "2m" | "1y";
+const DATE_INTERVAL = process.env.DEFAULT_DATE_INTERVAL || 14
 
-interface DateRange {
-    startDate: Date;
-    endDate: Date;
-    rangeText: string; // Only the dynamic part (e.g., "last 30 days")
-}
-
-const getDateRange = (from: string | null, to: string | null, defaultPeriod: Period = "30d"): DateRange => {
+export const getDateRangeText = (from: Date | undefined, to: Date | undefined) => {
+    console.log('from and to inside getDateRange: ')
     let startDate: Date;
-    const endDate: Date = to ? parseISO(to) : new Date(); // Default to today if 'to' is missing
+    let endDate: Date;
 
-    // Validate 'from' date
-    if (from) {
-        const parsedFrom = parseISO(from);
-        startDate = isValid(parsedFrom) ? parsedFrom : calculateDefaultStartDate(defaultPeriod);
+    if (from && !to) {
+        startDate = from;
+        endDate = from;
+    } else if (to && !from) {
+        startDate = subDays(to, Number(DATE_INTERVAL));
+        endDate = to;
+    } else if (from && to) {
+        startDate = from;
+        endDate = to;
     } else {
-        startDate = calculateDefaultStartDate(defaultPeriod);
+        // Handle the case where both are undefined
+        startDate = subDays(new Date(), Number(DATE_INTERVAL));
+        endDate = new Date();
     }
 
-    const rangeText = formatDateRange(startDate, endDate); // Only returns the dynamic part
-    return { startDate, endDate, rangeText };
+    const rangeText = formatDateRange(startDate, endDate); // Ensure this function is defined
+
+    return { rangeText };
 };
 
-// Helper function to calculate default start date based on a predefined period
-const calculateDefaultStartDate = (period: Period): Date => {
-    const today = new Date();
-    switch (period) {
-        case "30d":
-            return subDays(today, 30);
-        case "2m":
-            return subMonths(today, 2);
-        case "1y":
-            return subYears(today, 1);
-        default:
-            return subDays(today, 14); // Default to last 15 days
-    }
-};
 
 // Function to generate only the dynamic text (e.g., "last X days")
 const formatDateRange = (startDate: Date, endDate: Date): string => {
@@ -71,4 +61,4 @@ const formatDateRange = (startDate: Date, endDate: Date): string => {
     }
 };
 
-export { getDateRange };
+

@@ -1,6 +1,3 @@
-"use client"
-
-
 import {
     Card,
     CardContent
@@ -13,7 +10,7 @@ export function AnalyticsCard({ children, title = "Analytics", chartKey }: { chi
     return (
         <Card className="w-full bg-transparent" >
             <ChartHeader title={title} chartKey={chartKey} />
-            <CardContent >
+            <CardContent className="text-center">
                 {children}
             </CardContent>
         </Card>

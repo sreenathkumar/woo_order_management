@@ -78,3 +78,39 @@ export function decodeSearchParams<T = Record<string, string | string[] | undefi
 
     return decodedParams as T;
 }
+
+export function convertToLocalTime(timeString: string) {
+    if (!timeString) return ""; // Handle empty values
+
+    // Handle 2-hour interval format: "2025-02-20 14:00"
+    if (timeString.match(/^\d{1,2}(\.\d{2})?-\d{1,2}(\.\d{2})?$/)) {
+        const [start, end] = timeString.split("-").map((t) => parseFloat(t));
+
+        const formatHour = (hour: number) => {
+            const period = hour >= 12 ? "PM" : "AM";
+            const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+            return `${hour12}${period}`;
+        };
+        return `${formatHour(start)} - ${formatHour(end)}`;
+    }
+
+    // Handle day format: "2025-02-20"
+    else if (timeString.match(/^\d{4}-\d{2}-\d{1,2}$/)) {
+        const date = new Date(timeString + " UTC");
+        return date.toLocaleDateString([], { year: "numeric", month: "short", day: "numeric" });
+    }
+
+    // Handle month format: "2025-02"
+    else if (timeString.match(/^\d{4}-\d{2}$/)) {
+        const [year, month] = timeString.split("-");
+        const date = new Date(`${year}-${month}-01 UTC`);
+        return date.toLocaleDateString([], { year: "numeric", month: "short" });
+    }
+
+    // Handle year format: "2025"
+    else if (timeString.match(/^\d{4}$/)) {
+        return timeString; // Year remains unchanged
+    }
+
+    return timeString; // Fallback for unexpected formats
+}

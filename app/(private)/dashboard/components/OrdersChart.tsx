@@ -8,6 +8,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/shadcn/chart"
+import { convertToLocalTime } from "@/lib/utils"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 
 const chartConfig = {
@@ -24,11 +25,11 @@ function OrdersChart({ chartData }: { chartData: any[] }) {
       <BarChart accessibilityLayer data={chartData}>
         <CartesianGrid vertical={false} />
         <XAxis
-          dataKey="month"
+          dataKey="time"
           tickLine={false}
           tickMargin={10}
           axisLine={false}
-          tickFormatter={(value) => value.slice(0, 3)}
+          tickFormatter={(value) => convertToLocalTime(value)}
         />
         <ChartTooltip content={<ChartTooltipContent hideLabel />} />
         <ChartLegend content={<ChartLegendContent />} />
