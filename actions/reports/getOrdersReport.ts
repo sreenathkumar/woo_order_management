@@ -16,7 +16,6 @@ async function getDeliveredOrderReport({ from, to }: ReportTypeArgument) {
 
     // Calculate time difference in days
     const difference = differenceInDays(new Date(endDate), new Date(startDate)) + 1;
-    console.log('Date Range:', startDate, 'to', endDate, '| Difference:', difference);
 
     const groupStage = getGroupStage(difference);
 
