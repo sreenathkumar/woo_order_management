@@ -21,7 +21,7 @@ const chartConfig = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function OrdersChart({ chartData }: { chartData: any[] }) {
   return (
-    <ChartContainer config={chartConfig} className="h-[60vh] w-full">
+    <ChartContainer config={chartConfig} className="h-[40vh] w-full md:h-[60vh]">
       <BarChart accessibilityLayer data={chartData}>
         <CartesianGrid vertical={false} />
         <XAxis

@@ -15,7 +15,7 @@ async function AdminDashboard({ searchParams }: AdminDashboardProps) {
             <Suspense fallback={<span>Loading delivered orders data</span>}>
                 <AllOrdersReport from={stringFromArray(delivery_from)} to={stringFromArray(delivery_to)} />
             </Suspense>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 <Suspense fallback={<span>Loading Link Paid reports</span>}>
                     <LinkPaidReport from={stringFromArray(link_paid_from)} to={stringFromArray(link_paid_to)} />
                 </Suspense>

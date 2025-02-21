@@ -22,6 +22,7 @@ import { getDateRangeText } from "@/lib/formatDate"
 
 const DATE_INTERVAL = process.env.DEFAULT_DATE_INTERVAL || 14
 
+//type for the chart header component props
 type DateRangePickerProps = { className?: React.HTMLAttributes<HTMLDivElement>, title: string, chartKey: string }
 
 function ChartHeader({ className, chartKey, title }: DateRangePickerProps) {
@@ -29,12 +30,12 @@ function ChartHeader({ className, chartKey, title }: DateRangePickerProps) {
   const router = useRouter();
   const [rangeText, setRangeText] = useState<string>("last 15 days");
 
+
   const [date, setDate] = useState<DateRange | undefined>({
     from: subDays(new Date(), Number(DATE_INTERVAL)),
     to: new Date(),
   });
 
-  console.log('date: ', date);
 
   //set query parameter on date change
   const handleDateChange = () => {
@@ -65,6 +66,7 @@ function ChartHeader({ className, chartKey, title }: DateRangePickerProps) {
     router.replace(`?${params.toString()}`);
   }
 
+
   //Reset the selected date range
   const resetDateChange = () => {
     const params = new URLSearchParams(searchParams.toString());
@@ -83,6 +85,7 @@ function ChartHeader({ className, chartKey, title }: DateRangePickerProps) {
     // Update URL without adding to browser history
     router.replace(`?${params.toString()}`);
   }
+
 
   //update the selected date when the page is visited with query parameters
   useEffect(() => {
@@ -120,7 +123,7 @@ function ChartHeader({ className, chartKey, title }: DateRangePickerProps) {
   }, []);
 
   return (
-    <CardHeader className="flex flex-row items-center justify-between mb-10">
+    <CardHeader className="flex flex-col items-start justify-between gap-2 mb-10 p-4">
       <div>
         <CardTitle>{title}</CardTitle>
         {rangeText && <CardDescription>Showing the report for {rangeText}</CardDescription>}

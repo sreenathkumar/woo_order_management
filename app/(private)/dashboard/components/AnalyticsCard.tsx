@@ -8,7 +8,7 @@ import ChartHeader from "./ChartHeader"
 export function AnalyticsCard({ children, title = "Analytics", chartKey }: { children: React.ReactNode, title: string, chartKey: string }) {
 
     return (
-        <Card className="w-full bg-transparent" >
+        <Card className="w-full bg-transparent">
             <ChartHeader title={title} chartKey={chartKey} />
             <CardContent className="text-center">
                 {children}
