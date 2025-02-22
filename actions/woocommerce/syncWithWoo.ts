@@ -10,7 +10,7 @@ import dbConnect from "@/dbConnect";
 //fetch orders from the woocommerce api
 export const fetchOrders: ({ status }: { status?: string }) => Promise<OrderType[]> = async ({ status }: { status?: string }) => {
     try {
-        const res = await wooApi.get('orders', { status });
+        const res = await wooApi.get('orders', { status, currency: 'KWD' });
 
         const totalPages = res.headers['x-wp-totalpages'];
 
