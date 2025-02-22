@@ -17,15 +17,17 @@ async function OrdersPage({ searchParams }: { searchParams: SearchParams }) {
     return (
         <div className="py-8 flex flex-col flex-1 overflow-auto">
             <SelectedOrderProvider>
-                <div className="flex justify-between items-center mb-6">
-                    <div className="flex gap-2 items-center">
-                        <SearchField className='w-80' />
+                <div className="flex flex-col justify-between gap-4 mb-6 md:flex-row lg:items-center">
+                    <div className="flex gap-2 justify-between items-center flex-1">
+                        <SearchField className='max-w-80' />
                         <SyncBtn />
                     </div>
-                    <div className="flex gap-2 items-center">
+                    <div className="flex gap-2 items-center justify-between">
                         <CopyBtn />
-                        <FilterBtn />
-                        <UpdateOrderBtn />
+                        <div className="flex gap-2 items-center justify-between flex-grow">
+                            <FilterBtn />
+                            <UpdateOrderBtn />
+                        </div>
                     </div>
                 </div>
                 <Suspense fallback={<div>Loading table data...</div>}>
