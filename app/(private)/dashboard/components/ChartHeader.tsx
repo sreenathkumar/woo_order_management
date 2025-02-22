@@ -123,7 +123,7 @@ function ChartHeader({ className, chartKey, title }: DateRangePickerProps) {
   }, []);
 
   return (
-    <CardHeader className="flex flex-col items-start justify-between gap-2 mb-10 p-4">
+    <CardHeader className="flex flex-col items-start justify-between gap-2 mb-10 p-4 lg:flex-row">
       <div>
         <CardTitle>{title}</CardTitle>
         {rangeText && <CardDescription>Showing the report for {rangeText}</CardDescription>}

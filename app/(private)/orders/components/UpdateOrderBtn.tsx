@@ -27,8 +27,8 @@ function UpdateOrderBtn() {
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader className='mb-4'>
-                    <DialogTitle className="font-bold text-2xl">Update Selected Orders</DialogTitle>
-                    <DialogDescription>Change the assignee and status for the selected orders.</DialogDescription>
+                    <DialogTitle className="font-bold text-2xl lg:text-left">Update Selected Orders</DialogTitle>
+                    <DialogDescription className='w-full'>Change the assignee and status for the selected orders.</DialogDescription>
                 </DialogHeader>
 
                 <UpdateOrders closeModal={closeModal} />
