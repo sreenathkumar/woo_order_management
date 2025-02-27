@@ -36,7 +36,7 @@ export const prepareOrder = (order: any) => {
         payment: payment_method || '',
         date_created_gmt: date_created_gmt || '',
         date_modified_gmt: date_modified_gmt || '',
-        status: 'Processing',
+        status: 'processing',
         asignee: null,
     } satisfies ExtendedOrderType
 
