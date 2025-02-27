@@ -28,7 +28,7 @@ export async function POST(request: Request) {
             await newOrder.save();
 
             // Notify clients about the new order
-            await fetch("http://localhost:3000/api/webhook/updates", {
+            await fetch(`${process.env.BASE_URL}/api/webhook/updates`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ type: "NEW_ORDER", order }),
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
                 status: 200,
             })
         } else {
-            return new Response('', {
+            return new Response('Error in order_created webhook. Nothing getting from webhook.', {
                 status: 400,
             })
         }
