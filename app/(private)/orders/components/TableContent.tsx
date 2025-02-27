@@ -11,22 +11,16 @@ import UpdateOrders from "./UpdateOrders";
 import { useRouter } from "next/navigation";
 
 function TableContent({ orders, columns }: { orders: OrderType[], columns: number }) {
-    const [initailOrders, setInitailOrders] = useState<OrderType[]>(orders);
-    const router = useRouter()
-
-    //update UI when the orders prop changes
-    useEffect(() => {
-        setInitailOrders(orders);
-    }, [orders]);
+    const router = useRouter();
 
     useEffect(() => {
         const eventSource = new EventSource("/api/webhook/updates")
 
         eventSource.onmessage = (event) => {
-            const data = JSON.parse(event.data)
-            if (data.type === "NEW_ORDER") {
-                setInitailOrders(prev => [data.order, ...prev]);
-                router.refresh();
+            const data = JSON.parse(event.data);
+
+            if (data) {
+                router.refresh()
             }
         }
 
@@ -37,7 +31,7 @@ function TableContent({ orders, columns }: { orders: OrderType[], columns: numbe
 
     return (
         <TableBody>
-            {initailOrders.length > 0 ? initailOrders.map((order: OrderType) => (
+            {orders.length > 0 ? orders.map((order: OrderType) => (
                 <OrderRowItem
                     key={order.order_id}
                     order={order}
