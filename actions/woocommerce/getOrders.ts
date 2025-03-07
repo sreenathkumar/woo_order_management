@@ -22,87 +22,70 @@ interface SearchParams {
 const getOrders = async (params: SearchParams = {}) => {
     const { query = '', page = 1, userId, role, sort = '' } = params;
 
-
     // Calculate the number of documents to skip
     const skip = (page - 1) * LIMIT;
 
-    let searchQuery: string = '';
-    let sorting: string = '';
-
-    if (Array.isArray(query)) {
-        searchQuery = query.join(' ');
-    } else {
-        searchQuery = query
-    }
-
-    if (Array.isArray(sort)) {
-        sorting = sort.join(' ');
-    } else {
-        sorting = sort
-    }
+    const searchQuery: string = Array.isArray(query) ? query.join(' ') : query;
+    const sorting: string = Array.isArray(sort) ? sort.join(' ') : sort;
 
     try {
-        /* If there are no orders in the database, fetch them from the API
-        ** then insert them into the database
-        ** and return them as server action response 
-        */
-        if (!searchQuery) {
-            await dbConnect();
+        await dbConnect();
 
-            const searchCriteria = role === 'admin' || role === 'clerk' ? {} : { asignee: userId };
-            const sortCriteria: Record<string, SortOrder> =
-                sorting === "city_asc" ? { city: 1 } :
-                    sorting === "city_desc" ? { city: -1 } :
-                        { date_created_gmt: -1 };
+        const searchCriteria = role === 'admin' || role === 'clerk' ? {} : { asignee: userId };
+        const sortCriteria: Record<string, SortOrder> =
+            sorting === "city_asc" ? { city: 1 } :
+                sorting === "city_desc" ? { city: -1 } :
+                    { date_created_gmt: -1 };
 
-            //retrieve the orders from the database
-            const dbOrders = await Order.find(searchCriteria)
+        // **🔹 Handle Filtering**
+        if (searchQuery) {
+            const filteredOrders = await getFilteredOrders({ query: searchQuery, skip, limit: LIMIT, userId, role });
+
+            return filteredOrders
+        }
+
+        // **🔹 Fetch Orders & Total Count in Parallel**
+        const [dbOrders, totalCount] = await Promise.all([
+            Order.find(searchCriteria)
                 .select('-_id -__v -createdAt -updatedAt -date_created_gmt -date_modified_gmt')
                 .populate('asignee', ['name', 'image'], User)
                 .limit(LIMIT)
                 .sort(sortCriteria)
                 .skip(skip)
-                .lean();
+                .lean(),
 
-            //eliminate the extra data returned from the woo api
-            const orders = dbOrders.map((item) => {
-                return {
-                    order_id: item.order_id,
-                    name: item.name,
-                    city: item.city,
-                    address: item.address,
-                    phone: item.phone,
-                    payment: item.payment,
-                    amount: item.amount,
-                    status: item.status,
-                    asignee: {
-                        id: item.asignee?._id?.toString() || '',
-                        name: item.asignee?.name,
-                        image: item.asignee?.image
-                    }
-                }
-            })
+            Order.countDocuments(searchCriteria),
+        ]);
 
-            if (orders.length > 0) {
-                return orders
-            }
+        // **🔹 Format Orders**
+        const orders = dbOrders.map((item) => ({
+            order_id: item.order_id,
+            name: item.name,
+            city: item.city,
+            address: item.address,
+            phone: item.phone,
+            payment: item.payment,
+            amount: item.amount,
+            status: item.status,
+            asignee: {
+                id: item.asignee?._id?.toString() || '',
+                name: item.asignee?.name,
+                image: item.asignee?.image,
+            },
+        }));
 
-        } else {
-            //call the filtered orders function which will 
-            //return the orders based on the search params
-            const filteredOrders = await getFilteredOrders({ query: searchQuery, skip, limit: LIMIT, userId, role });
-
-            if (filteredOrders.length > 0) {
-                return filteredOrders
-            }
-        }
-
-        return [];
+        return {
+            orders,
+            totalPages: Math.ceil(totalCount / LIMIT),
+            totalCount,
+            currentPage: page,
+        };
     } catch (error) {
-        console.log('error in getAllOrders: ', error);
-        return [];
+        console.log('Error in getOrders: ', error);
+        return { orders: [], totalPages: 0, totalCount: 0, currentPage: page };
     }
-}
+};
+
 
 //return a single order data
 export const getSingleOrder = async (order_id: string) => {

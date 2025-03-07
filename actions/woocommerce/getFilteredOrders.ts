@@ -1,28 +1,25 @@
-'use server'
+"use server";
 
 import dbConnect from "@/dbConnect";
 import Order from "@/models/orderModel";
 import { OrderType } from "@/types/OrderType";
 
-//params that can be passed in url to filter the orders
 interface SearchParams {
     query?: string | string[];
     skip?: number;
     limit?: number;
     userId?: string;
-    role?: string
+    role?: string;
+    page?: number;
 }
 
-/* function which will return the orders based on the search params
-** we will use it to filter the orders using searchQuery, page,
-** and filters like status, date, etc.
-*/
 async function getFilteredOrders(params: SearchParams) {
-    const { query = '', skip = 0, limit = 10, userId, role } = params;
+    const { query = '', skip = 0, limit = 10, userId, role, page = 1 } = params;
 
     try {
         await dbConnect();
 
+        // Define search criteria
         const searchCriteria = {
             ...(role === 'admin' || role === 'clerk' ? {} : { asignee: userId }),
             $or: [
@@ -33,45 +30,57 @@ async function getFilteredOrders(params: SearchParams) {
                 { asignee_name: { $regex: query, $options: 'i' } }
             ],
         };
-        // Retrieve the orders from the database
-        const result = await Order.find(searchCriteria)
-            .select('-_id -__v -createdAt -updatedAt -date_created_gmt -date_modified_gmt')
-            .populate('asignee', ['name', 'image'])
-            .limit(limit)
-            .skip(skip)
-            .sort({ date_created_gmt: -1 })
-            .lean()
 
-        //Convert the result to OrderType for the server action response
-        const dbOrders: OrderType[] = result.map((item) => {
-            return {
-                order_id: item.order_id,
-                name: item.name,
-                city: item.city,
-                address: item.address,
-                phone: item.phone,
-                payment: item.payment,
-                amount: item.amount,
-                status: item.status,
-                asignee: {
-                    id: item.asignee?._id.toString(),
-                    name: item.asignee?.name,
-                    image: item.asignee?.image
-                }
+        // Fetch filtered orders and total count in parallel
+        const [ordersResult, totalCount] = await Promise.all([
+            Order.find(searchCriteria)
+                .select('-_id -__v -createdAt -updatedAt -date_created_gmt -date_modified_gmt')
+                .populate('asignee', ['name', 'image'])
+                .limit(limit)
+                .skip(skip)
+                .sort({ date_created_gmt: -1 })
+                .lean(),
+
+            Order.countDocuments(searchCriteria),
+        ]);
+
+        // Format response
+        const orders: OrderType[] = ordersResult.map((item) => ({
+            order_id: item.order_id,
+            name: item.name,
+            city: item.city,
+            address: item.address,
+            phone: item.phone,
+            payment: item.payment,
+            amount: item.amount,
+            status: item.status,
+            asignee: {
+                id: item.asignee?._id.toString(),
+                name: item.asignee?.name,
+                image: item.asignee?.image
             }
-        });
+        }));
 
-        if (dbOrders && dbOrders.length > 0) {
-            return dbOrders;
-        }
+        // Calculate total pages
+        const totalPages = Math.ceil(totalCount / limit);
 
-        return []
+        return {
+            orders,
+            totalPages,
+            totalCount,
+            currentPage: page
+        };
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-        console.log('error in filteredOrders: ', error?.message);
-        return [];
+        console.log('Error in getFilteredOrders:', error?.message);
+        return {
+            orders: [],
+            totalPages: 0,
+            totalCount: 0,
+            currentPage: page
+        };
     }
 }
 
-export default getFilteredOrders
+export default getFilteredOrders;
