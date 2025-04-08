@@ -3,6 +3,7 @@
 import dbConnect from "@/dbConnect";
 import Order from "@/models/orderModel";
 import { OrderType } from "@/types/OrderType";
+import { SortOrder } from "mongoose";
 
 interface SearchParams {
     query?: string | string[];
@@ -11,10 +12,11 @@ interface SearchParams {
     userId?: string;
     role?: string;
     page?: number;
+    sort?: Record<string, SortOrder>
 }
 
 async function getFilteredOrders(params: SearchParams) {
-    const { query = '', skip = 0, limit = 10, userId, role, page = 1 } = params;
+    const { query = '', skip = 0, limit = 10, userId, role, page = 1, sort } = params;
 
     try {
         await dbConnect();
@@ -38,7 +40,7 @@ async function getFilteredOrders(params: SearchParams) {
                 .populate('asignee', ['name', 'image'])
                 .limit(limit)
                 .skip(skip)
-                .sort({ date_created_gmt: -1 })
+                .sort(sort)
                 .lean(),
 
             Order.countDocuments(searchCriteria),
