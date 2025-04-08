@@ -12,7 +12,11 @@ const processingTableColumns = ['Order Number', 'Name', 'City', 'Phone Number', 
 //table columns for the delivered orders table
 const deliveredTableColumns = ['Order Number', 'Date', 'Status'];
 
-async function EmployeePage({ params }: { params: { id: string } }) {
+type Props = {
+    params: Promise<{ id: string }>
+};
+
+async function EmployeePage({ params }: Props) {
     const { id } = await params;
     const session = await auth();
 
@@ -27,7 +31,6 @@ async function EmployeePage({ params }: { params: { id: string } }) {
     if (session.user?.id === id) {
         redirect('/profile');
     }
-
 
 
     return (
