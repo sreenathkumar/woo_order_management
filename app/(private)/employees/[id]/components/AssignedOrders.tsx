@@ -50,33 +50,4 @@ async function AssignedOrders({ id, status, tableColumns }: { id: string, status
     )
 }
 
-function DefaultOrderRows({ orders }: { orders: any[] }) {
-    return (
-        <>
-            {orders.map((order) => (
-                <TableRow key={order.id}>
-                    <TableCell className="font-medium">{order.order_id}</TableCell>
-                    <TableCell>{order.name}</TableCell>
-                    <TableCell>{order.city}</TableCell>
-                    <TableCell>{order.phone}</TableCell>
-                    <TableCell>{order.payment === 'hesabe' ? 'PAID' : 'Cash On Delivery'}</TableCell>
-                    <TableCell>{order.payment === 'hesabe' ? 'N/A' : order.amount}</TableCell>
-                    <TableCell>
-                        <Badge
-                            variant={order.status === 'completed' ? 'success' : 'warning'}
-                            className={
-                                order.status === 'completed'
-                                    ? 'bg-green-100 text-green-800 hover:bg-green-100'
-                                    : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100'
-                            }
-                        >
-                            {order.status}
-                        </Badge>
-                    </TableCell>
-                </TableRow>
-            ))}
-        </>
-    )
-}
-
 export default AssignedOrders
