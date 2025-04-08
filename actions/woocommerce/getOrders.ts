@@ -32,14 +32,15 @@ const getOrders = async (params: SearchParams = {}) => {
         await dbConnect();
 
         const searchCriteria = role === 'admin' || role === 'clerk' ? {} : { asignee: userId };
-        const sortCriteria: Record<string, SortOrder> =
-            sorting === "city_asc" ? { city: 1 } :
-                sorting === "city_desc" ? { city: -1 } :
-                    { date_created_gmt: -1 };
+        const sortMap: Record<string, Record<string, SortOrder>> = {
+            city_asc: { city: 1, date_created_gmt: -1 },
+            city_desc: { city: -1, date_created_gmt: -1 },
+        };
 
+        const sortCriteria = sortMap[sorting] || { date_created_gmt: -1 };
         // **🔹 Handle Filtering**
         if (searchQuery) {
-            const filteredOrders = await getFilteredOrders({ query: searchQuery, skip, limit: LIMIT, userId, role });
+            const filteredOrders = await getFilteredOrders({ query: searchQuery, sort: sortCriteria, skip, limit: LIMIT, userId, role, });
 
             return filteredOrders
         }
