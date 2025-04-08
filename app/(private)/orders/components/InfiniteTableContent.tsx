@@ -22,8 +22,6 @@ function InfiniteTableContent({ orders, columns, totalPages, currentPage }: { or
     const { ref, inView } = useInView({ threshold: 0.2 });
     const searchParams = useSearchParams();
 
-    console.log(totalPages, activePage);
-
     //get the url params for filter
     const query = searchParams.get('query') ?? undefined;
     const sort = searchParams.get('sort') ?? undefined;
@@ -32,18 +30,14 @@ function InfiniteTableContent({ orders, columns, totalPages, currentPage }: { or
     useEffect(() => {
         setInitialOrders(orders);
         setActivePage(currentPage);
-        console.log('filter applied called');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [orders])
-
-    console.log('server res: ', orders);
 
     //server side event listener for getting updates from woocommerce
     useEffect(() => {
-        console.log('event data effect called');
         const eventSource = new EventSource("/api/webhook/updates")
 
         eventSource.onmessage = (event) => {
-            console.log('event on message');
             const data = JSON.parse(event.data);
 
             if (data) {
@@ -81,12 +75,8 @@ function InfiniteTableContent({ orders, columns, totalPages, currentPage }: { or
 
         fetchData();
 
-        console.log(' use effect inview');
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [inView]);
-
-    console.log('ini orders: ', initialOrders);
 
     return (
         <>
