@@ -15,7 +15,7 @@ async function OrdersPage({ searchParams }: { searchParams: SearchParams }) {
     const { query, sort } = decodeSearchParams(await searchParams);
 
     return (
-        <div className="py-8 flex flex-col flex-1 overflow-auto">
+        <div className="pt-8 pb-4 flex flex-col flex-1 overflow-auto">
             <SelectedOrderProvider>
                 <div className="flex flex-col justify-between gap-4 mb-6 md:flex-row lg:items-center">
                     <div className="flex gap-2 justify-between items-center flex-1">

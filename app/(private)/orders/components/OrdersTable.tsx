@@ -1,10 +1,10 @@
-import { Table, TableHeader, } from "@/components/shadcn/table";
-import TableHeadRowItem from "./TableHeadRowItem";
-import TableContent from "./TableContent";
-import { OrderType } from "@/types/OrderType";
 import getOrders from "@/actions/woocommerce/getOrders";
 import { auth } from "@/auth";
+import { Table, TableHeader, } from "@/components/shadcn/table";
+import { OrderType } from "@/types/OrderType";
 import { redirect } from "next/navigation";
+import InfiniteTableContent from "./InfiniteTableContent";
+import TableHeadRowItem from "./TableHeadRowItem";
 
 
 const tableColumns = ['Order Number', 'Name', 'City', 'Address', 'Phone Number', 'Payment', 'Amount', 'Status', 'Asignee', 'Actions'];
@@ -19,17 +19,20 @@ async function OrdersTable({ query, sort }: { query: string | string[] | undefin
     const userId = session?.user?.id
     const role = session?.user?.role
 
-    const orders: OrderType[] = await getOrders({ query, userId, role, sort });
+    const { orders, totalPages, currentPage }: { orders: OrderType[], totalPages: number, currentPage: number } = await getOrders({ query, userId, role, sort });
 
     return (
-        <div className="border rounded-lg w-full overflow-x-auto">
-            <Table className="border-collapse">
-                <TableHeader>
-                    <TableHeadRowItem columns={tableColumns} orderIds={orders.map(order => order.order_id)} />
-                </TableHeader>
-                <TableContent columns={tableColumns.length} orders={orders} />
-            </Table>
-        </div>
+        <>
+            <div className="border rounded-lg w-full overflow-x-auto">
+                <Table className="border-collapse">
+                    <TableHeader className="sticky top-0 z-10 bg-background shadow">
+                        <TableHeadRowItem columns={tableColumns} orderIds={orders.map(order => order.order_id)} />
+                    </TableHeader>
+                    <InfiniteTableContent columns={tableColumns.length} orders={orders} totalPages={totalPages} currentPage={currentPage} />
+                </Table>
+            </div>
+        </>
+
     )
 }
 
