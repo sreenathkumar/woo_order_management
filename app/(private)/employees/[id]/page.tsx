@@ -34,7 +34,7 @@ async function EmployeePage({ params }: Props) {
 
 
     return (
-        <div className="container mx-auto p-4 space-y-6">
+        <div className="container mx-auto p-4 space-y-6 overflow-y-auto">
             <Card className="p-6 bg-transparent">
                 <CardHeader className="p-0 mb-12">
                     <CardTitle>Employee Details</CardTitle>
