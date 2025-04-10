@@ -8,29 +8,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Setup SSH
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.CLOUDWAYS_SSH_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.CLOUDWAYS_HOST }} >> ~/.ssh/known_hosts
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.CLOUDWAYS_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.CLOUDWAYS_HOST }} >> ~/.ssh/known_hosts
 
-    - name: Rsync files to Cloudways server
-      run: |
-        rsync -avz --delete \
-          --exclude='.git/' \
-          --exclude='node_modules/' \
-          ./ \
-          ${{ secrets.CLOUDWAYS_USER }}@${{ secrets.CLOUDWAYS_HOST }}:/home/master/applications/your-app-folder/public_html/
+      - name: Rsync files to Cloudways server
+        run: |
+          rsync -avz --delete \
+            --exclude='.git/' \
+            --exclude='node_modules/' \
+            ./ \
+            ${{ secrets.CLOUDWAYS_USER }}@${{ secrets.CLOUDWAYS_HOST }}:/applications/${{secrets.CLOUDWAYS_APP_ID}}/public_html/
 
-    - name: SSH into server and restart PM2
-      run: |
-        ssh ${{ secrets.CLOUDWAYS_USER }}@${{ secrets.CLOUDWAYS_HOST }} << 'EOF'
-          cd /home/master/applications/your-app-folder/public_html
-          npm install --production
-          npm run build
-          pm2 restart ecosystem.config.js || pm2 start npm --name "next-app" -- start
-        EOF
+      - name: SSH into server and restart PM2
+        run: |
+          ssh ${{ secrets.CLOUDWAYS_USER }}@${{ secrets.CLOUDWAYS_HOST }} << 'EOF'
+            cd /applications/${{secrets.CLOUDWAYS_APP_ID}}/public_html
+            npm install --production
+            npm run build
+            pm2 restart ecosystem.config.js || pm2 start npm --name "next-app" -- start
+          EOF
