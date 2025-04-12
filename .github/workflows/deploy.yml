@@ -1,7 +1,7 @@
 name: Deploy to Cloudways
 
 on:
-  workflow_dispatch: # 🔘 Manual trigger only
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -11,26 +11,66 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup SSH
+      - name: Write .env.production with secrets
+        run: |
+          echo "BASE_URL=${{ secrets.BASE_URL }}" >> .env.production
+          echo "DB_URI=${{ secrets.DB_URI }}" >> .env.production
+          echo "UPLOADTHING_TOKEN=${{ secrets.UPLOADTHING_TOKEN }}" >> .env.production
+          echo "AUTH_SECRET=${{ secrets.AUTH_SECRET }}" >> .env.production
+          echo "AUTH_RESEND_KEY=${{ secrets.AUTH_RESEND_KEY }}" >> .env.production
+          echo "SALT_ROUND=${{ secrets.SALT_ROUND }}" >> .env.production
+          echo "EMAIL_USER=${{ secrets.EMAIL_USER }}" >> .env.production
+          echo "EMAIL_PASS=${{ secrets.EMAIL_PASS }}" >> .env.production
+          echo "colors=${{ secrets.colors }}" >> .env.production
+          echo "WOO_KEY=${{ secrets.WOO_KEY }}" >> .env.production
+          echo "WOO_SECRET=${{ secrets.WOO_SECRET }}" >> .env.production
+          echo "WOO_API_URI=${{ secrets.WOO_API_URI }}" >> .env.production
+          echo "WOO_API_QUERY_LIMIT=${{ secrets.WOO_API_QUERY_LIMIT }}" >> .env.production
+          echo "DEFAULT_DATE_INTERVAL=${{ secrets.DEFAULT_DATE_INTERVAL }}" >> .env.production
+          echo "AUTH_TRUST_HOST=${{ secrets.AUTH_TRUST_HOST }}" >> .env.production
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build Next.js app
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          DB_URI: ${{ secrets.DB_URI }}
+          UPLOADTHING_TOKEN: ${{ secrets.UPLOADTHING_TOKEN }}
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          AUTH_RESEND_KEY: ${{ secrets.AUTH_RESEND_KEY }}
+          SALT_ROUND: ${{ secrets.SALT_ROUND }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          colors: ${{ secrets.colors }}
+          WOO_KEY: ${{ secrets.WOO_KEY }}
+          WOO_SECRET: ${{ secrets.WOO_SECRET }}
+          WOO_API_URI: ${{ secrets.WOO_API_URI }}
+          WOO_API_QUERY_LIMIT: ${{ secrets.WOO_API_QUERY_LIMIT }}
+          DEFAULT_DATE_INTERVAL: ${{ secrets.DEFAULT_DATE_INTERVAL }}
+          AUTH_TRUST_HOST: ${{ secrets.AUTH_TRUST_HOST }}
+        run: npm run build
+
+      - name: Setup SSH for remote commands
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.CLOUDWAYS_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.CLOUDWAYS_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Rsync files to Cloudways server
+      - name: Upload build to Cloudways
         run: |
-          rsync -avz --delete \
+          rsync -avz --delete --no-perms --no-times \
             --exclude='.git/' \
             --exclude='node_modules/' \
+            --exclude='.htaccess' \
             ./ \
-            ${{ secrets.CLOUDWAYS_USER }}@${{ secrets.CLOUDWAYS_HOST }}:/applications/${{secrets.CLOUDWAYS_APP_ID}}/public_html/
+            ${{ secrets.CLOUDWAYS_USER }}@${{ secrets.CLOUDWAYS_HOST }}:applications/${{ secrets.CLOUDWAYS_APP_ID }}/public_html/
 
-      - name: SSH into server and restart PM2
+      - name: SSH into server and restart app with PM2
         run: |
-          ssh ${{ secrets.CLOUDWAYS_USER }}@${{ secrets.CLOUDWAYS_HOST }} << 'EOF'
-            cd /applications/${{secrets.CLOUDWAYS_APP_ID}}/public_html
-            npm install --production
-            npm run build
-            pm2 restart ecosystem.config.js || pm2 start npm --name "next-app" -- start
-          EOF
+          ssh ${{ secrets.CLOUDWAYS_USER }}@${{ secrets.CLOUDWAYS_HOST }} "
+          cd applications/${{ secrets.CLOUDWAYS_APP_ID }}/public_html
+          npm install --legacy-peer-deps --omit=dev
+          npx pm2 describe woo-order-management > /dev/null && npx pm2 restart woo-order-management || npx pm2 start npm --name "woo-order-management" -- start
+          "
