@@ -23,7 +23,7 @@ async function AssignedOrders({ id, status, tableColumns }: { id: string, status
                     {
                         orders.length === 0 ? <TableRow><TableCell colSpan={tableColumns.length} className="text-center text-red-500">No orders found</TableCell></TableRow> :
                             orders.map((order) => (
-                                <TableRow key={order.id}>
+                                <TableRow key={order.order_id}>
                                     <TableCell className="font-medium">{order.order_id}</TableCell>
                                     <TableCell>{order.name}</TableCell>
                                     <TableCell>{order.city}</TableCell>
