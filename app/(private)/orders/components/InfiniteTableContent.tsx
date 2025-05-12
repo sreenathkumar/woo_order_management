@@ -41,8 +41,7 @@ function InfiniteTableContent({ orders, columns, totalPages, currentPage }: { or
             const data = JSON.parse(event.data);
 
             if (data) {
-                //setInitialOrders([...initialOrders, ...data])
-                setInitialOrders(prev => [...prev, ...data])
+                setInitialOrders(prev => [data.order, ...prev])
                 router.refresh()
             }
         }
