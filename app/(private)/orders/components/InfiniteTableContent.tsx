@@ -19,7 +19,7 @@ function InfiniteTableContent({ orders, columns, totalPages, currentPage }: { or
     const [isLoading, setIsLoading] = useState(false);
     const [initialOrders, setInitialOrders] = useState(orders);
     const [activePage, setActivePage] = useState(currentPage);
-    const { ref, inView } = useInView({ threshold: 0.2 });
+    const { ref, inView } = useInView({ threshold: 0.1 });
     const searchParams = useSearchParams();
 
     //get the url params for filter
