@@ -49,7 +49,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
     if (!isOpen) return null
 
     return createPortal(
-        <div className="fixed inset-0  px-auto z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
+        <div className="fixed inset-0  px-2 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
             <div className="fixed inset-0 bg-black opacity-50" onClick={onClose}></div>
             <div
                 ref={modalRef}
