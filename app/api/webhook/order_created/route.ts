@@ -16,12 +16,20 @@ export async function POST(request: Request) {
 
             if (!order) {
                 return new Response('Order not created', {
-                    status: 400,
+                    status: 200,
                 })
             }
 
             //connect to the database
             await dbConnect();
+
+            //check if the order already exists in the database
+            const existingOrder = await Order.findOne({ order_id: order.order_id });
+            if (existingOrder) {
+                return new Response('Order already exists', {
+                    status: 400,
+                })
+            }
 
             //create a new order document in the database
             const newOrder = new Order(order);
