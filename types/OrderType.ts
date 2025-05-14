@@ -1,5 +1,5 @@
 export interface OrderType {
-    order_id: string,
+    order_id: number,
     name: string,
     city: string,
     address: {

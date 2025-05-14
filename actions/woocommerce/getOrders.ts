@@ -89,7 +89,7 @@ const getOrders = async (params: SearchParams = {}) => {
 
 
 //return a single order data
-export const getSingleOrder = async (order_id: string) => {
+export const getSingleOrder = async (order_id: number) => {
     if (!order_id) {
         return null;
     }

@@ -20,7 +20,7 @@ export interface DriversType {
 
 //type for update orders form
 interface UpdateOrderType {
-    order_ids: string[],
+    order_ids: number[],
     assignee?: string,
     assignee_name?: string
     status?: string
@@ -28,7 +28,7 @@ interface UpdateOrderType {
 
 //type for single order data
 interface SingleOrderType {
-    order_id: string,
+    order_id: number,
     payment: string,
     status: string,
     asignee: {
@@ -41,13 +41,13 @@ interface SingleOrderType {
 const statuses = ['Processing', 'Delivered', 'Cash Paid', 'Link Paid', 'Unpaid'];
 const prepaidOrderStatuses = ['Processing', 'Delivered'];
 
-function UpdateOrders({ closeModal, order_id }: { closeModal: () => void, order_id?: string }) {
+function UpdateOrders({ closeModal, order_id }: { closeModal: () => void, order_id?: number }) {
     const { selectedOrder, setSelectedOrder } = useSelectedOrder();
     const [singleOrder, setSingleOrder] = useState<SingleOrderType | null>(null);
     const [drivers, setDrivers] = useState<DriversType[]>([]);
     const router = useRouter();
 
-    const removeOrder = (orderId: string) => {
+    const removeOrder = (orderId: number) => {
         setSelectedOrder(selectedOrder.filter(id => id !== orderId));
     }
 

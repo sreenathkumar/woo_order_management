@@ -99,7 +99,7 @@ function InfiniteTableContent({ orders, columns, totalPages, currentPage }: { or
 }
 
 
-function EditOrderBtn({ order_id }: { order_id: string }) {
+function EditOrderBtn({ order_id }: { order_id: number }) {
     const [isOpen, setIsOpen] = useState(false);
     const { setSelectedOrder } = useSelectedOrder()
 

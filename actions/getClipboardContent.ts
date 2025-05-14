@@ -4,7 +4,7 @@ import dbConnect from "@/dbConnect";
 import Order from "@/models/orderModel";
 
 interface OrderType {
-    order_id: string;
+    order_id: number;
     name: string;
     city: string;
     address: string;

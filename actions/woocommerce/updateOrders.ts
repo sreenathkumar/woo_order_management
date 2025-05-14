@@ -7,7 +7,7 @@ interface UpdateOrdertype {
     assignee?: string,
     assignee_name?: string,
     status?: string,
-    order_ids: string[]
+    order_ids: number[]
 }
 
 async function updateOrders({ assignee, assignee_name, status, order_ids }: UpdateOrdertype) {

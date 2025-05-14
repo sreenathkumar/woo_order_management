@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 
 const orderSchema = new mongoose.Schema({
     order_id: {
-        type: String,
+        type: Number,
         required: true,
     },
     name: {
