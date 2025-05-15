@@ -38,7 +38,7 @@ export async function POST(request: Request) {
             const existingOrder = await Order.findOne({ order_id: order.order_id });
             if (existingOrder) {
                 return new Response('Order already exists', {
-                    status: 400,
+                    status: 200,
                 })
             }
 
