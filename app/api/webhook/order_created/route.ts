@@ -3,6 +3,7 @@
 
 import { prepareOrder } from "@/actions/woocommerce/wooConfig";
 import dbConnect from "@/dbConnect";
+import { orderSchema } from "@/lib/zod";
 import Order from "@/models/orderModel";
 import { OrderType } from "@/types/OrderType";
 
@@ -17,6 +18,16 @@ export async function POST(request: Request) {
             if (!order) {
                 return new Response('Order not created', {
                     status: 200,
+                })
+            }
+
+            //validate the order data
+            const { error } = orderSchema.safeParse(order);
+
+            if (error) {
+                console.error('Order validation error:', error.errors);
+                return new Response('Invalid order data', {
+                    status: 400,
                 })
             }
 
