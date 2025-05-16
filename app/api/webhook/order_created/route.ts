@@ -3,6 +3,7 @@
 
 import { prepareOrder } from "@/actions/woocommerce/wooConfig";
 import dbConnect from "@/dbConnect";
+import verifySignature from "@/lib/verifyWebhook";
 import { orderSchema } from "@/lib/zod";
 import Order from "@/models/orderModel";
 import { OrderType } from "@/types/OrderType";
@@ -10,24 +11,32 @@ import { OrderType } from "@/types/OrderType";
 
 export async function POST(request: Request) {
     try {
+        const isAuthenticated = await verifySignature(request, process.env.OC_WC_WEBHOOK);
+
+        if (!isAuthenticated) {
+            console.error('Webhook authentication failed');
+            return new Response('Webhook unauthenticated', {
+                status: 200,
+            })
+        }
+
         const res = await request.json();
 
         if (res) {
+            //validate the order data
+            const { error } = orderSchema.safeParse(res);
+
+            if (error) {
+                console.error('Order validation error:', error.errors);
+                return new Response('Invalid order data', {
+                    status: 200,
+                })
+            }
             const order: OrderType | null = prepareOrder(res);
 
             if (!order) {
                 return new Response('Order not created', {
                     status: 200,
-                })
-            }
-
-            //validate the order data
-            const { error } = orderSchema.safeParse(order);
-
-            if (error) {
-                console.error('Order validation error:', error.errors);
-                return new Response('Invalid order data', {
-                    status: 400,
                 })
             }
 
@@ -64,6 +73,7 @@ export async function POST(request: Request) {
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
+        console.log('Something error in order_created webhook: ', error.message);
         return new Response(`Webhook error: ${error.message}`, {
             status: 400,
         })

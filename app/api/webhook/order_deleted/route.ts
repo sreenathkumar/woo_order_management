@@ -1,8 +1,18 @@
 import dbConnect from "@/dbConnect";
+import verifySignature from "@/lib/verifyWebhook";
 import Order from "@/models/orderModel";
 
 export async function POST(request: Request) {
     try {
+        const isAuthenticated = await verifySignature(request, process.env.OD_WC_WEBHOOK);
+
+        if (!isAuthenticated) {
+            console.error('Webhook authentication failed');
+            return new Response('Webhook unauthenticated', {
+                status: 200,
+            })
+        }
+
         const res = await request.json();
 
         if (res) {
