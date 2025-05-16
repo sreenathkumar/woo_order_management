@@ -11,7 +11,7 @@ async function AdminDashboard({ searchParams }: AdminDashboardProps) {
     const { delivery_from, delivery_to, link_paid_from, link_paid_to, cash_paid_from, cash_paid_to, } = searchParams;
 
     return (
-        <div className="flex flex-1 flex-col gap-4 py-8">
+        <div className="flex flex-1 flex-col gap-4 py-8 overflow-y-auto no-scrollbar">
             <Suspense fallback={<span>Loading delivered orders data</span>}>
                 <AllOrdersReport from={stringFromArray(delivery_from)} to={stringFromArray(delivery_to)} />
             </Suspense>
