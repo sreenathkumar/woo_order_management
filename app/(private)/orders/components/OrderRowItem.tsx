@@ -63,7 +63,7 @@ function TableAddressCell({
         .filter(Boolean)
 
     return (
-        <TableCell className="min-w-[300px]">
+        <TableCell>
             {/* Conditionally render the address string as a single paragraph */}
             {addressParts.length > 0 ? <p>{
                 <>

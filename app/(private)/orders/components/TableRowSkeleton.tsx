@@ -22,7 +22,7 @@ export function TableRowSkeleton() {
             </td>
 
 
-            <td className="p-4 align-middle [&:has([role=checkbox])]:pr-0 whitespace-nowrap min-w-[300px]">
+            <td className="p-4 align-middle [&:has([role=checkbox])]:pr-0 whitespace-nowrap">
                 <div className="h-4 w-[250px] bg-gray-200 dark:bg-gray-700 rounded"></div>
             </td>
 
