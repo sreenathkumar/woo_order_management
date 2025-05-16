@@ -3,7 +3,7 @@
 import { Checkbox } from "@/components/shadcn/checkbox"
 import { useSelectedOrder } from "@/context/SelectedOrderCtx"
 
-function OrderCheckbox({ id }: { id: string }) {
+function OrderCheckbox({ id }: { id: number }) {
     const { selectedOrder, setSelectedOrder } = useSelectedOrder();
 
     const handleCheckboxChange = (checked: boolean) => {

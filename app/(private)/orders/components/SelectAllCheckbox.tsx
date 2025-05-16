@@ -3,7 +3,7 @@
 import { Checkbox } from '@/components/shadcn/checkbox';
 import { useSelectedOrder } from '@/context/SelectedOrderCtx';
 
-function SelectAllCheckbox({ orders }: { orders: string[] }) {
+function SelectAllCheckbox({ orders }: { orders: number[] }) {
     const { selectedOrder, setSelectedOrder } = useSelectedOrder();
 
     // function which will add all the orders to the selected orders and vice versa
