@@ -39,9 +39,21 @@ function InfiniteTableContent({ orders, columns, totalPages, currentPage }: { or
 
         eventSource.onmessage = (event) => {
             const data = JSON.parse(event.data);
-
             if (data) {
-                setInitialOrders(prev => [data.order, ...prev])
+                if (data.type === 'DELETE_ORDER') {
+                    setInitialOrders(prev => {
+                        const exists = prev.some(item => item.order_id === data.order_id);
+
+                        if (!exists) {
+                            return prev
+                        }
+
+                        return prev.filter(item => item.order_id !== data.order_id)
+                    }
+                    )
+                } else {
+                    setInitialOrders(prev => [data.order, ...prev])
+                }
                 router.refresh()
             }
         }
