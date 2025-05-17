@@ -6,7 +6,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 
 async function AssignedOrders({ id, status, tableColumns }: { id: string, status?: string, tableColumns: string[] }) {
     const orders = await getAssignedOrders({ id, status });
-    console.log(orders);
     return (
         <CardContent>
             <Table>

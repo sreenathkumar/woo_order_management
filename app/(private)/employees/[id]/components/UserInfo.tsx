@@ -1,9 +1,14 @@
-import Image from "next/image"
-import { CardContent } from "@/components/shadcn/card"
-import { getUser } from "@/actions/user";
+import { CardContent } from "@/components/shadcn/card";
+import Image from "next/image";
 
-async function UserInfo({ id }: { id: string }) {
-    const user = await getUser({ userId: id });
+interface UserInfoType {
+    name: string,
+    image: string,
+    address: string
+}
+
+async function UserInfo({ user }: { user: UserInfoType | null }) {
+
 
     if (!user) return (
         <div className="flex items-center space-x-4 text-gray-400">

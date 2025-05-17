@@ -5,6 +5,7 @@ import { Suspense } from "react"
 import AssignedOrders from "./components/AssignedOrders";
 import { auth } from "@/auth";
 import { notFound, redirect } from "next/navigation";
+import { getUser } from "@/actions/user";
 
 //table columns for the processing orders table
 const processingTableColumns = ['Order Number', 'Name', 'City', 'Phone Number', 'Payment', 'Amount', 'Status'];
@@ -32,6 +33,7 @@ async function EmployeePage({ params }: Props) {
         redirect('/profile');
     }
 
+    const user = await getUser({ userId: id });
 
     return (
         <div className="container mx-auto p-4 space-y-6 overflow-y-auto">
@@ -39,12 +41,10 @@ async function EmployeePage({ params }: Props) {
                 <CardHeader className="p-0 mb-12">
                     <CardTitle>Employee Details</CardTitle>
                 </CardHeader>
-                <Suspense fallback={<div>Loading user info...</div>}>
-                    <UserInfo id={id} />
-                </Suspense>
+                <UserInfo user={user} />
             </Card>
 
-            <Card className="p-6 bg-transparent">
+            {user?.role === 'driver' && <Card className="p-6 bg-transparent">
                 <CardHeader>
                     <CardTitle>Assigned Orders</CardTitle>
                 </CardHeader>
@@ -62,7 +62,7 @@ async function EmployeePage({ params }: Props) {
                         <AssignedOrders id={id} status="delivered" tableColumns={deliveredTableColumns} />
                     </TabsContent>
                 </Tabs>
-            </Card>
+            </Card>}
         </div>
     )
 }
