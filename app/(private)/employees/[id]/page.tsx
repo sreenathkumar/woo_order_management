@@ -1,17 +1,15 @@
-import { Card, CardHeader, CardTitle } from "@/components/shadcn/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/shadcn/tabs"
-import UserInfo from "./components/UserInfo"
-import { Suspense } from "react"
-import AssignedOrders from "./components/AssignedOrders";
-import { auth } from "@/auth";
-import { notFound, redirect } from "next/navigation";
 import { getUser } from "@/actions/user";
+import { auth } from "@/auth";
+import { Card, CardHeader, CardTitle } from "@/components/shadcn/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/shadcn/tabs";
+import { ClipboardProvider } from "@/context/ClipboardCtx";
+import { notFound, redirect } from "next/navigation";
+import { Suspense } from "react";
+import CopyOrders from "./components/CopyOrders";
+import DeliveredTab from "./components/DeliveredTab";
+import ProcessingTab from "./components/ProcessingTab";
+import UserInfo from "./components/UserInfo";
 
-//table columns for the processing orders table
-const processingTableColumns = ['Order Number', 'Name', 'City', 'Phone Number', 'Payment', 'Amount', 'Status'];
-
-//table columns for the delivered orders table
-const deliveredTableColumns = ['Order Number', 'Date', 'Status'];
 
 type Props = {
     params: Promise<{ id: string }>
@@ -48,20 +46,27 @@ async function EmployeePage({ params }: Props) {
                 <CardHeader>
                     <CardTitle>Assigned Orders</CardTitle>
                 </CardHeader>
-                <Tabs defaultValue="processing">
-                    <TabsList>
-                        <TabsTrigger value="processing">Processing</TabsTrigger>
-                        <TabsTrigger value="delivered">Delivered</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="processing">
-                        <Suspense fallback={<div>Loading assigned orders...</div>}>
-                            <AssignedOrders id={id} status="processing" tableColumns={processingTableColumns} />
-                        </Suspense>
-                    </TabsContent>
-                    <TabsContent value="delivered">
-                        <AssignedOrders id={id} status="delivered" tableColumns={deliveredTableColumns} />
-                    </TabsContent>
-                </Tabs>
+                <div className="relative">
+                    <ClipboardProvider>
+                        <Tabs defaultValue="processing">
+                            <TabsList>
+                                <TabsTrigger value="processing">Processing</TabsTrigger>
+                                <TabsTrigger value="delivered">Delivered</TabsTrigger>
+                            </TabsList>
+                            <TabsContent value="processing">
+                                <Suspense fallback={<div>Loading assigned orders...</div>}>
+                                    <ProcessingTab id={id} />
+                                </Suspense>
+                            </TabsContent>
+                            <TabsContent value="delivered">
+                                <Suspense fallback={<div>Loading assigned orders...</div>}>
+                                    <DeliveredTab id={id} />
+                                </Suspense>
+                            </TabsContent>
+                        </Tabs>
+                        <CopyOrders />
+                    </ClipboardProvider>
+                </div>
             </Card>}
         </div>
     )

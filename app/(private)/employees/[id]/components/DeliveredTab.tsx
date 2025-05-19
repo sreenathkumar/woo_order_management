@@ -1,16 +1,26 @@
 import getAssignedOrders from "@/actions/woocommerce/getAssignedOrders";
 import { Badge } from "@/components/shadcn/badge";
-import { CardContent } from "@/components/shadcn/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shadcn/table"
+import { CardContent } from "@/components/shadcn/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shadcn/table";
+import CheckAll from "./CheckAll";
+import DeliveryDate from "./DeliveryDate";
+import SelectOrder from "./SelectOrder";
 
 
-async function AssignedOrders({ id, status, tableColumns }: { id: string, status?: string, tableColumns: string[] }) {
-    const orders = await getAssignedOrders({ id, status });
+//table columns for the delivered orders table
+const tableColumns = ['Order Number', 'Status', 'Delivery Date', 'Payment', 'Amount'];
+
+async function DeliveredTab({ id }: { id: string }) {
+    const orders = await getAssignedOrders({ id, status: 'delivered' });
+
     return (
         <CardContent>
             <Table>
                 <TableHeader>
                     <TableRow>
+                        <TableHead className="w-12">
+                            <CheckAll status="delivered" orders={orders} />
+                        </TableHead>
                         {
                             tableColumns?.map((column) => (
                                 <TableHead key={column}>{column}</TableHead>
@@ -23,12 +33,13 @@ async function AssignedOrders({ id, status, tableColumns }: { id: string, status
                         orders.length === 0 ? <TableRow><TableCell colSpan={tableColumns.length} className="text-center text-red-500">No orders found</TableCell></TableRow> :
                             orders.map((order) => (
                                 <TableRow key={order.order_id}>
+                                    <TableCell>
+                                        <SelectOrder
+                                            status={'processing'}
+                                            order={JSON.stringify(order)}
+                                        />
+                                    </TableCell>
                                     <TableCell className="font-medium">{order.order_id}</TableCell>
-                                    <TableCell>{order.name}</TableCell>
-                                    <TableCell>{order.city}</TableCell>
-                                    <TableCell>{order.phone}</TableCell>
-                                    <TableCell>{order.payment === 'hesabe' ? 'PAID' : 'Cash On Delivery'}</TableCell>
-                                    <TableCell>{order.payment === 'hesabe' ? 'N/A' : order.amount}</TableCell>
                                     <TableCell>
                                         <Badge
                                             variant={order.status === 'completed' ? 'success' : 'warning'}
@@ -41,6 +52,9 @@ async function AssignedOrders({ id, status, tableColumns }: { id: string, status
                                             {order.status}
                                         </Badge>
                                     </TableCell>
+                                    <DeliveryDate date={order.date_delivered} />
+                                    <TableCell>{order.payment === 'hesabe' ? 'PAID' : 'Cash On Delivery'}</TableCell>
+                                    <TableCell>{order.payment === 'hesabe' ? 'N/A' : order.amount}</TableCell>
                                 </TableRow>
                             ))}
                 </TableBody>
@@ -49,4 +63,4 @@ async function AssignedOrders({ id, status, tableColumns }: { id: string, status
     )
 }
 
-export default AssignedOrders
+export default DeliveredTab
