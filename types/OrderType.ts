@@ -13,7 +13,7 @@ export interface OrderType {
     amount: string,
     status: string,
     payment?: string,
-    asignee?: {
+    asignee: {
         id?: string,
         name?: string,
         image?: string

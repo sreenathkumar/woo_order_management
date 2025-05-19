@@ -4,14 +4,24 @@ import { Checkbox } from "@/components/shadcn/checkbox";
 import { useClipboardCopy } from "@/context/ClipboardCtx";
 import { generateClipboardText } from "@/lib/clipboardText";
 import { isSameArray } from "@/lib/utils";
-import { OrderType } from "@/types/OrderType";
 import { formatDate } from "date-fns";
 
-function CheckAll({ status, orders }: { status?: 'processing' | 'delivered', orders: OrderType[] }) {
+interface orderType {
+    order_id: number,
+    name: string,
+    city: string,
+    phone: string,
+    amount: string,
+    status: string,
+    payment?: string,
+    date_delivered?: string
+}
+
+function CheckAll({ status, orders }: { status?: 'processing' | 'delivered', orders: orderType[] }) {
     const { clipboardContent, setClipboardContent, clearClipboard } = useClipboardCopy()
 
     //const parsedOrders = JSON.parse(orders);
-    const ids = orders.map((order: OrderType) => order.order_id);
+    const ids = orders.map((order: orderType) => order.order_id);
     let clipboardText = '';
 
     const isSame = isSameArray(ids, clipboardContent.ids)
