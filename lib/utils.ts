@@ -114,3 +114,16 @@ export function convertToLocalTime(timeString: string) {
 
     return timeString; // Fallback for unexpected formats
 }
+
+/**
+ * Function which will compare two array of `string | number` to check if both are same or not.
+ * @param {Array<number | string>} a Array One
+ * @param {Array<number | string>} b Array 2nd
+ * @returns {boolean} `true` if both are same otherwise `false`
+ */
+export function isSameArray(a: Array<string | number>, b: Array<string | number>): boolean {
+    if (a.length !== b.length) return false;
+    const sortedA = [...a].sort();
+    const sortedB = [...b].sort();
+    return sortedA.every((val, index) => val === sortedB[index]);
+}
