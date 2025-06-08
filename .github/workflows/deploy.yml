@@ -11,6 +11,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Install pnpm if not already installed
+        run: |
+          if ! command -v pnpm &> /dev/null; then
+            npm install -g pnpm
+          else
+            echo "pnpm already installed"
+          fi
+
       - name: Write .env.production with secrets
         run: |
           echo "BASE_URL=${{ secrets.BASE_URL }}" >> .env.production
@@ -30,9 +38,10 @@ jobs:
           echo "AUTH_TRUST_HOST=${{ secrets.AUTH_TRUST_HOST }}" >> .env.production
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: pnpm install --frozen-lockfile
 
-      - name: Build Next.js app
+      - name: Build Next.js app with standalone output
+        run: pnpm build
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
           DB_URI: ${{ secrets.DB_URI }}
@@ -49,7 +58,6 @@ jobs:
           WOO_API_QUERY_LIMIT: ${{ secrets.WOO_API_QUERY_LIMIT }}
           DEFAULT_DATE_INTERVAL: ${{ secrets.DEFAULT_DATE_INTERVAL }}
           AUTH_TRUST_HOST: ${{ secrets.AUTH_TRUST_HOST }}
-        run: npm run build
 
       - name: Setup SSH for remote commands
         run: |
@@ -58,19 +66,23 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.CLOUDWAYS_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Upload build to Cloudways
+      - name: Sync standalone build
         run: |
           rsync -avz --delete --no-perms --no-times \
-            --exclude='.git/' \
-            --exclude='node_modules/' \
             --exclude='.htaccess' \
-            ./ \
+            .next/standalone/ \
             ${{ secrets.CLOUDWAYS_USER }}@${{ secrets.CLOUDWAYS_HOST }}:applications/${{ secrets.CLOUDWAYS_APP_ID }}/public_html/
+
+      - name: Sync static files
+        run: |
+          rsync -avz --delete --no-perms --no-times \
+            .next/static/ \
+            ${{ secrets.CLOUDWAYS_USER }}@${{ secrets.CLOUDWAYS_HOST }}:applications/${{ secrets.CLOUDWAYS_APP_ID }}/public_html/.next/static/
 
       - name: SSH into server and restart app with PM2
         run: |
           ssh ${{ secrets.CLOUDWAYS_USER }}@${{ secrets.CLOUDWAYS_HOST }} "
-          cd applications/${{ secrets.CLOUDWAYS_APP_ID }}/public_html
-          npm install --legacy-peer-deps --omit=dev
-          npx pm2 describe woo-order-management > /dev/null && npx pm2 restart woo-order-management || npx pm2 start npm --name "woo-order-management" -- start
+            cd applications/${{ secrets.CLOUDWAYS_APP_ID }}/public_html
+            [ -L _next ] || ln -s .next _next &&
+            npx pm2 reload woo-order-management || npx pm2 start server.js --name 'woo-order-management'
           "
