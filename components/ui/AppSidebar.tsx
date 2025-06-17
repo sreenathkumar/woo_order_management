@@ -6,7 +6,7 @@ import {
   SidebarHeader,
   SidebarRail
 } from "@/components/shadcn/sidebar"
-import { HelpCircle, IdCard, LayoutDashboard, Package } from 'lucide-react'
+import { HelpCircle, IdCard, LayoutDashboard, Package, Truck } from 'lucide-react'
 import MainNav from "./MainNav"
 import User from "./User"
 
@@ -14,6 +14,7 @@ const navItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Employees", url: "/employees", icon: IdCard, requires: ['admin', 'clerk'] },
   { title: "Orders", url: "/orders", icon: Package },
+  { title: 'Track Delivery', url: '/track', icon: Truck },
   { title: "Help", url: "/help", icon: HelpCircle },
 ]
 
