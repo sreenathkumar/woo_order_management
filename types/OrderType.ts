@@ -19,3 +19,20 @@ export interface OrderType {
         image?: string
     } | null
 }
+
+export interface OrderLocationType {
+    order_id: number;
+    city: string;
+    address: {
+        block?: string;
+        street?: string;
+        house?: string;
+        jaddah?: string;
+    };
+    asignee_name: string;
+    asignee: string;
+    coordinates: {
+        lat: number;
+        lon: number;
+    } | null;
+}
