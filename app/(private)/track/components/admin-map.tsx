@@ -1,11 +1,16 @@
 "use client"
 
+import { useMapContext } from '@/context/MapCtx';
 import maplibregl, { LngLatBoundsLike, Map as MapLibreMap, Marker } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useEffect, useRef } from "react";
 
 
 export default function AdminMap() {
+    //get the map locations
+    const { locations } = useMapContext();
+
+    //create a ref for the map container and map instance
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const mapRef = useRef<MapLibreMap | null>(null);
 
@@ -36,20 +41,28 @@ export default function AdminMap() {
     useEffect(() => {
         if (!mapRef.current) return;
 
-        mapRef.current.on('load', () => {
-            const orderLocations = [
-                { lon: 48.0853, lat: 29.2156, name: 'Order 1' },
-                { lon: 47.9780, lat: 29.3750, name: 'Order 2' },
-            ];
-            orderLocations.forEach(location => {
-                new Marker()
-                    .setLngLat([location.lon, location.lat])
-                    .setPopup(new maplibregl.Popup().setText(location.name))
-                    .addTo(mapRef.current!);
-            });
-        });
-    }, []);
+        const orderLocations = locations.flatMap(location => {
+            //check if the location has coordinates
+            if (!location.coordinates || !location.coordinates.lat || !location.coordinates.lon) return [];
 
+            return {
+                order_id: location.order_id,
+                address: location.address,
+                lat: location.coordinates.lat,
+                lon: location.coordinates.lon,
+            };
+        })
+
+        orderLocations.forEach(location => {
+            const order_id = location.order_id || 'N/A';
+            const address = `Block: ${location.address.block || 'N/A'}, Street: ${location.address.street || 'N/A'}, House: ${location.address.house || 'N/A'}`;
+            new Marker()
+                .setLngLat([location.lon, location.lat])
+                .setPopup(MapPopup({ order_id, address }))
+                .addTo(mapRef.current!);
+        });
+
+    }, [locations]);
 
     return (
         <div className="relative w-full h-[420px] z-10">
@@ -58,3 +71,15 @@ export default function AdminMap() {
     );
 };
 
+
+function MapPopup(data?: { order_id?: string | number, address?: string }) {
+    const popup = new maplibregl.Popup().setHTML(
+        `<div>
+            <h4 class="text-base font-bold text-gray-800 mb-2">Order Details</h3>
+            <p class="text-sm text-gray-600">Order ID: ${data?.order_id || 'N/A'}</p>
+            <p class="text-sm text-gray-600">Address: ${data?.address || 'Unknown'}</p>
+        </div>`
+    )
+
+    return popup
+}

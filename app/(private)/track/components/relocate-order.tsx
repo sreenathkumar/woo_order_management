@@ -1,20 +1,55 @@
 'use client'
 
+import updateLocation from "@/actions/map/updateLocation"
 import { Button } from "@/components/shadcn/button"
 import { Input } from "@/components/shadcn/input"
 import { Label } from "@/components/shadcn/label"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/shadcn/popover"
+import { useMapContext } from "@/context/MapCtx"
 import { useState } from "react"
 
-function RelocateOrder({ order_id, address }: { order_id: number, address: { city: string, block?: string } }) {
-    const [openPopover, setOpenPopover] = useState<string | null>(null)
+function RelocateOrder({ order_id }: { order_id: number }) {
+    const { setLocations } = useMapContext()
+    const [openPopover, setOpenPopover] = useState<boolean>(false)
     const [relocationType, setRelocationType] = useState<string>("")
     const [latitude, setLatitude] = useState<string>("")
     const [longitude, setLongitude] = useState<string>("");
 
-    const handleRelocate = (order_id: number) => { };
+    const handleRelocate = async (order_id: number) => {
+        if (relocationType === "automatic") {
+            // update the location automatically
+            const result = await updateLocation({ order_id });
+            if (result) {
+
+                setLocations(prev => {
+                    return prev.map(order =>
+                        order.order_id === order_id ? { ...order, coordinates: result } : order
+                    );
+                });
+            }
+
+        } else if (relocationType === "custom") {
+            // update the location with custom coordinates
+            const customLocation = {
+                lat: parseFloat(latitude),
+                lon: parseFloat(longitude)
+            };
+
+            const result = await updateLocation({ order_id, location: customLocation });
+
+            if (result) {
+                setLocations(prev => {
+                    return prev.map(order =>
+                        order.order_id === order_id ? { ...order, coordinates: result } : order
+                    );
+                });
+            }
+        }
+        setOpenPopover(false);
+        setRelocationType("");
+    };
     return (
-        <Popover>
+        <Popover onOpenChange={() => setOpenPopover(!openPopover)} open={openPopover}>
             <PopoverTrigger className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-3 py-2 text-sm font-medium">
                 Relocate
             </PopoverTrigger>
@@ -79,9 +114,6 @@ function RelocateOrder({ order_id, address }: { order_id: number, address: { cit
                     )}
 
                     <div className="flex justify-end space-x-2">
-                        <Button variant="outline" size="sm" onClick={() => setOpenPopover(null)}>
-                            Cancel
-                        </Button>
                         <Button
                             size="sm"
                             onClick={() => handleRelocate(order_id)}

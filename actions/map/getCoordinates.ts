@@ -37,10 +37,12 @@ export async function getAssignedOrderCoordinates(): Promise<OrderLocationType[]
             if (locations.length > 0) {
                 const location = locations.find(loc => loc.city === order.city);
 
-                if (location && location[`block_${order?.address?.block}`]) {
-                    return {
-                        ...orderObj,
-                        coordinates: location[`block_${order?.address?.block}`]
+                if (location && location.blocks.get(`${order?.address?.block}`)) {
+                    const coordinate = location.blocks.get(`${order?.address?.block}`);
+
+                    orderObj.coordinates = {
+                        lat: coordinate.lat,
+                        lon: coordinate.lon
                     };
                 }
             }

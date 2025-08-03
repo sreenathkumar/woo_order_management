@@ -1,14 +1,14 @@
 import mongoose from "mongoose";
 
 const CoordinatesSchema = new mongoose.Schema({
+    lon: {
+        type: Number,
+        required: true,
+    },
     lat: {
         type: Number,
         required: true,
     },
-    lon: {
-        type: Number,
-        required: true,
-    }
 }, { _id: false });
 
 const LocationSchema = new mongoose.Schema({

@@ -123,3 +123,11 @@ body {
     @apply bg-background text-foreground;
   }
 } */
+
+.maplibregl-popup .maplibregl-popup-content{
+  @apply p-4 rounded-md;
+}
+
+.maplibregl-popup .maplibregl-popup-close-button{
+  @apply text-gray-600 right-3 hover:bg-none;
+}
