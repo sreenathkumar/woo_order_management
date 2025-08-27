@@ -18,7 +18,6 @@ Copy `.env.example` → `.env` and fill in the following variables:
 | `SALT_ROUND`            | Number of salt rounds for password hashing            | `10` (default)                                                |
 | `EMAIL_USER`            | SMTP email username (for sending notifications)       | `your@email.com`                                              |
 | `EMAIL_PASS`            | SMTP email password                                   | `yourEmailPassword`                                           |
-| `colors`                | Theme or Tailwind color configuration                 | Optional, e.g., `"primary = blue, secondary = green"`         |
 | `WOO_KEY`               | WooCommerce API key                                   | Obtain from WooCommerce > Settings > Advanced > REST API      |
 | `WOO_SECRET`            | WooCommerce API secret                                | Provided alongside `WOO_KEY`                                  |
 | `SHOPIFY_CLIENT_ID`     | Shopify app client ID                                 | Required if integrating Shopify features                      |

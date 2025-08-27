@@ -12,7 +12,6 @@
 - [Project Structure](#-project-structure)
 - [Quick Start](#-quick-start)
 - [Documentation](#-documentation)
-- [Roadmap](#-roadmap)
 - [Contributing](#-contributing)
 - [License](#-license)
 
@@ -114,7 +113,7 @@ woo_order_management/
    ```
    pnpm install
    ```
-3. This project requires a `.env` file. Copy `.env.example` → .`env` and configure your environment variables. See [ENVIRONMENT.md](./ENVIRONMENT.md) for a full list and details about the environment variables.
+3. This project requires a `.env` file. Copy `.env.example` → .`env` and configure your environment variables. See [Environment Variables](./docs/ENVIRONMENT.md) for a full list and details about the environment variables.
 4. Run locally:
    `pnpm dev`
 5. Open http://localhost:3000
