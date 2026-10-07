@@ -22,6 +22,7 @@ async function StoresPage() {
                 </div>
 
                 <UniversalModal
+                    bodyClass="sm:max-w-md md:max-w-4xl flex flex-col"
                     title="Connect Your Shop"
                     description="Select your store platform and provide the base URL."
                     trigger={
@@ -48,6 +49,7 @@ async function StoresPage() {
                     <h3 className="text-lg text-muted-foreground font-medium mb-2">No stores connected</h3>
                     <p className="text-muted-foreground mb-4">Connect your first store to get started</p>
                     <UniversalModal
+                        bodyClass="sm:max-w-md md:max-w-4xl flex flex-col"
                         title="Connect Your Shop"
                         description="Select your store platform and provide the base URL."
                         trigger={
