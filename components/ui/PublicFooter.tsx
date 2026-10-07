@@ -14,16 +14,14 @@ function PublicFooter() {
                                 height={56}
                                 src="/logo-light.svg"
                                 alt="Company Logo"
-                                priority
-                                className="dark:hidden object-contain"
+                                className="dark:hidden object-contain h-8 w-auto"
                             />
                             <Image
                                 width={240}
                                 height={56}
                                 src="/logo-dark.svg"
                                 alt="Company Logo"
-                                priority
-                                className="hidden dark:block object-contain"
+                                className="hidden dark:block object-contain h-8 w-auto"
                             />
                         </Link>
                         <p className="text-muted-foreground text-sm">

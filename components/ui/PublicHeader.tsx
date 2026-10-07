@@ -14,8 +14,8 @@ function PublicHeader() {
                         height={56}
                         src="/logo-light.svg"
                         alt="Company Logo"
-                        priority
-                        className="dark:hidden object-contain"
+                        loading='eager'
+                        className="dark:hidden object-contain h-8 w-auto"
                     />
 
                     <Image
@@ -23,8 +23,8 @@ function PublicHeader() {
                         height={56}
                         src="/logo-dark.svg"
                         alt="Company Logo"
-                        priority
-                        className="hidden dark:block object-contain"
+                        loading='eager'
+                        className="hidden dark:block object-contain h-8 w-auto"
                     />
                 </Link>
 

@@ -39,9 +39,7 @@ async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             src={AppIcon}
             alt="Company Logo"
             width={48}
-            height={24}
-            className="object-contain"
-            priority
+            className="object-contain h-auto"
           />
         </Link>
       </SidebarHeader>
