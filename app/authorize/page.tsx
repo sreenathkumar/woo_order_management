@@ -8,14 +8,14 @@ import { Button } from "@/components/shadcn/button";
 import Link from "next/link";
 import { AlertTriangle } from "lucide-react";
 
-type Params = {
+type Params = Promise<{
     site_url?: string;
     callback_url?: string;
     state?: string;
     code_challenge?: string;
     code_challenge_method?: string;
     platform?: string;
-};
+}>;
 
 export default async function AuthorizePage({ searchParams }: { searchParams: Params }) {
     const { site_url, callback_url, state, code_challenge, code_challenge_method, platform } = await searchParams;
@@ -31,8 +31,17 @@ export default async function AuthorizePage({ searchParams }: { searchParams: Pa
     const session = await getServerSession();
 
     if (!session?.session?.activeOrganizationSlug) {
-        const next = `/authorize?${new URLSearchParams(searchParams as Record<string, string>)}`;
-        redirect(`/login?next=${encodeURIComponent(next)}`);
+        const returnParams = new URLSearchParams({
+            site_url,
+            callback_url,
+            state,
+            code_challenge,
+            code_challenge_method: code_challenge_method || "S256",
+            platform,
+        });
+
+        const next = `/authorize?${returnParams.toString()}`;
+        redirect(`/login?callbackUrl=${encodeURIComponent(next)}`);
     }
 
     async function approve() {
