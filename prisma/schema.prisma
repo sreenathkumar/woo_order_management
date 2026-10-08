@@ -135,17 +135,18 @@ enum Platform {
 }
 
 model Shop {
-  id       String   @id @default(auto()) @map("_id") @db.ObjectId
-  name     String?
-  domain   String
-  platform Platform
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  name            String?
+  domain          String
+  platform        Platform
+  webhookSecret   String?
 
-  organizationId String       @db.ObjectId
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  orders         Order[]
+  organizationId  String       @db.ObjectId
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  orders          Order[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@unique([domain])
   @@map("shop")
@@ -227,4 +228,21 @@ model ShopifySessions {
   emailVerified         Boolean?    @default(false)
   refreshToken          String?
   refreshTokenExpires   DateTime?
+}
+
+model AuthCode {
+  id                  String  @id @default(auto()) @map("_id") @db.ObjectId
+  code                String  @unique 
+  orgId               String
+  createdByUserId     String
+  platform            String
+  storeUrl            String
+  codeChallenge       String
+  codeChallengeMethod String   @default("S256")
+  used                Boolean  @default(false)
+  expiresAt           DateTime
+  createdAt           DateTime @default(now())
+
+  @@index([orgId])
+  @@index([expiresAt]) 
 }

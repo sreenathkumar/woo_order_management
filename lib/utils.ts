@@ -165,3 +165,21 @@ export function normalizeShopifyResponse(data: any): OrderInfoType | null {
         date_modified_gmt: data.updated_at || null
     };
 }
+
+export function extractDomain(input: string): string | null {
+    if (!input) return '';
+
+    let trimmed = input.trim();
+
+    // If the input doesn't start with http:// or https://, prepend https://
+    if (!/^https?:\/\//i.test(trimmed)) {
+        trimmed = 'https://' + trimmed;
+    }
+
+    try {
+        const parsedUrl = new URL(trimmed);
+        return parsedUrl.hostname; // Returns just the domain/hostname
+    } catch (error) {
+        return null;
+    }
+}

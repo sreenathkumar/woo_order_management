@@ -4,71 +4,56 @@ import { getRequiredSessionContext } from "@/lib/auth-context";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
-
-export async function connectShop(initialState: any, formData: FormData) {
-    const url = formData.get('url') as string;
-    const platform = formData.get('platform') as string;
-    const parsedUrl = new URL(url);
-    const shopDomain = parsedUrl.hostname;
-
-    if (!url || !platform) {
-        console.log("Missing parameters:", { url, platform });
+export async function connectShopifyStore(shopDomain: string) {
+    if (!shopDomain) {
+        console.log("Missing parameters:", { shopDomain });
         return {
             success: false,
-            message: "All parameters are required to connect a shop.",
-            errors: {
-                url: !url ? "Shop URL is required." : undefined,
-                platform: !platform ? "Shop platform is required." : undefined
-            }
+            message: "Shop domain is required.",
         }
     }
 
     const { organizationId } = await getRequiredSessionContext({
         allowedRoles: ['owner', 'manager']
-    })
+    });
 
-    if (platform === 'shopify') {
-        //check if the shop is already connected
-        const isConnected = await prisma.shop.findFirst({
-            where: {
-                domain: shopDomain,
-            }
-        });
-
-        if (isConnected) {
-            return {
-                success: false,
-                message: "Shop is already connected.",
-            }
+    if (!organizationId) {
+        console.error('Unauthorized access: organizationId is missing in the session context');
+        return {
+            success: false,
+            message: "Unauthorized access. Please log in again.",
         }
-
-        //get the shopify oauth url
-        const shopifyUrl = await connectShopifyStore({ shopDomain, organizationId });
-
-        // Redirect the user to the Shopify OAuth URL
-        redirect(shopifyUrl.toString());
     }
-    return { success: true, message: "Shop connected successfully.", };
-}
 
-interface ConnectShopifyStoreParams {
-    shopDomain: string,
-    organizationId: string
-}
-async function connectShopifyStore({ shopDomain, organizationId }: ConnectShopifyStoreParams) {
-    if (!shopDomain || !organizationId) {
-        console.error('Missing parameters in connectShopifyStore:', { shopDomain, organizationId });
-        throw new Error('Missing parameters in connectShopifyStore');
+    //check if the shop is already connected
+    const isConnected = await prisma.shop.findFirst({
+        where: {
+            domain: shopDomain,
+        }
+    });
+
+    if (isConnected) {
+        return {
+            success: false,
+            message: "Shop is already connected.",
+        }
     }
+
 
     if (!process.env.SHOPIFY_CLIENT_ID) {
         console.error('SHOPIFY_CLIENT_SECRET is not defined in the environment variables');
-        throw new Error('Some went wrong in the backend. Please try again later.');
+        return {
+            success: false,
+            message: "Some went wrong in the backend. Please try again later.",
+        }
     }
 
     if (!process.env.SHOPIFY_CLIENT_SECRET) {
         console.error('SHOPIFY_CLIENT_SECRET is not defined in the environment variables');
-        throw new Error('Some went wrong in the backend. Please try again later.');
+        return {
+            success: false,
+            message: "Some went wrong in the backend. Please try again later.",
+        }
     }
 
     const nonce = crypto.randomUUID();
@@ -96,5 +81,5 @@ async function connectShopifyStore({ shopDomain, organizationId }: ConnectShopif
         shop: shopDomain,
     });
 
-    return `https://${process.env.NEXT_PUBLIC_SHOPIFY_HOST}/api/connect?${params.toString()}`;
+    redirect(`https://${process.env.NEXT_PUBLIC_SHOPIFY_HOST}/api/connect?${params.toString()}`);
 }
