@@ -78,7 +78,7 @@ export default async function AuthorizePage({ searchParams }: { searchParams: Pa
 
     return (
         <main className="min-h-screen text-slate-100 grid grid-rows-[auto_1fr] justify-center items-center p-4 md:p-6 font-sans">
-            <Image loading="eager" src="/logo-dark.svg" alt="Logo" height={48} width={276} className="mx-auto mb-4 h-auto max-w-[276px]! self-start" />
+            <Image loading="eager" src="/logo-dark.svg" alt="Logo" height={48} width={276} className="mx-auto mb-4 h-8 w-auto self-start" />
 
             <Card className="max-w-xl mx-auto p-8">
                 <CardHeader className="p-0">
@@ -118,7 +118,7 @@ export default async function AuthorizePage({ searchParams }: { searchParams: Pa
 function MissingParamsUI() {
     return (
         <main className="min-h-screen text-slate-100 grid grid-rows-[auto_1fr] justify-center items-center p-4 md:p-6 font-sans">
-            <Image src="/logo-dark.svg" loading="eager" alt="Logo" height={48} width={276} className="mx-auto h-auto w-auto max-w-[276px]! self-start" />
+            <Image src="/logo-dark.svg" loading="eager" alt="Logo" height={48} width={276} className="mx-auto h-8 w-auto self-start" />
 
             <Card className="sm:max-w-xl p-8 sm:p-10 rounded-3xl border border-slate-200/80 dark:border-white/[0.08] backdrop-blur-2xl bg-white/70 dark:bg-card/40 shadow-2xl overflow-hidden gap-0">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl pointer-events-none" />
