@@ -3,6 +3,12 @@ import Image from "next/image";
 import Link from "next/link";
 import LoggedInState from "./components/logged-in-state";
 import LoggedOutState from "./components/logged-out-state";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    robots: { index: false, follow: false },
+};
+
 
 interface OnboardingPageProps {
     searchParams: Promise<{

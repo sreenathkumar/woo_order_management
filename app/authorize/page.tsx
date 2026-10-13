@@ -7,6 +7,12 @@ import Image from "next/image";
 import { Button } from "@/components/shadcn/button";
 import Link from "next/link";
 import { AlertTriangle } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    robots: { index: false, follow: false },
+};
+
 
 type Params = Promise<{
     site_url?: string;

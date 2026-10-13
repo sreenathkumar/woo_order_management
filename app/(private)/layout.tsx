@@ -1,7 +1,14 @@
 import { getServerSession } from "@/lib/auth-context";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
+export const metadata: Metadata = {
+    robots: {
+        index: false,
+        follow: false
+    }
+}
 
 async function ProtectedLayout({ children }: { children: React.ReactNode }) {
     const session = await getServerSession();
